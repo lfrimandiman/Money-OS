@@ -398,13 +398,17 @@ let S = load();
 function load(){
   try{
     const raw = localStorage.getItem(KEY);
-    if(raw){ const v = JSON.parse(raw); if(v && v.accounts) return v; }
+    if(raw){
+      const v = JSON.parse(raw);
+      // Sample data nobody chose (left by a version before the welcome) still gets the welcome.
+      if(v && v.accounts) return v.mode === "real" || v.sampleChosen ? v : Object.assign(v, {mode:"new"});
+    }
   }catch(e){}
   return Object.assign(seed(), {mode:"new"});   // first open: the welcome, not sample figures
 }
 let noSave = false;                    // set while scenarios run on a sample copy
 function save(){ if(noSave) return; try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
-function resetDemo(){ S = seed(); save(); }
+function resetDemo(){ S = Object.assign(seed(), {sampleChosen:true}); save(); }
 const isReal = () => S.mode === "real";
 /* Real mode follows the phone's calendar; the demo date is trial only [USER Oct 25]. */
 function localToday(){ const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
@@ -2448,7 +2452,7 @@ document.addEventListener("click", e => {
       render(); window.scrollTo(0,0); break;
     case "obrestore": ob = "restore"; syncMsg = {text:"", tone:""}; render(); break;
     case "obback": ob = 0; render(); break;
-    case "obsample": S = seed(); ob = 0; setup = null; save(); screenName = "home"; render();
+    case "obsample": S = Object.assign(seed(), {sampleChosen:true}); ob = 0; setup = null; save(); screenName = "home"; render();
       toast("Sample data — made up, to look around. More → Start with my own money when ready."); break;
     case "erase":
       if(!eraseArmed){ eraseArmed = true; render();
