@@ -14,6 +14,11 @@ over anything in this repo.** Questions you cannot answer from those pages go in
   inside). It is the artifact body, so it has no `<html>`, `<head>` or `<body>` wrapper.
 - `prototype/index.html` — generated standalone copy for opening locally:
   `cd prototype && cat skeleton.head app.html skeleton.foot > index.html`
+- `docs/` — the home-screen app GitHub Pages serves (https://lfrimandiman.github.io/Money-OS/).
+  Generated: run `sh site/build.sh` from the repo root after every change to `app.html` (it also
+  rebuilds `prototype/index.html`). `site/` holds its head, manifest, service worker and icons.
+  Hosted, the sheet link goes through the Apps Script in Jordan's sheet; inside Claude, through
+  his connectors. Test both.
 - `CHANGELOG.md` — one entry per version, newest first, plain language.
 
 ## The rule that keeps the money honest
