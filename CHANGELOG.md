@@ -2,6 +2,15 @@
 
 One entry per version, newest first.
 
+## v7 — 2026-10-25
+- **Opens like an app.** The app now has its own home on GitHub Pages
+  (https://lfrimandiman.github.io/Money-OS/) with a Money OS icon, name, cream status bar and an
+  offline copy, so Add to Home Screen opens it full screen without going through Claude.
+- **Sheet link outside Claude.** On the home-screen app, More → *Connect my sheet* walks through a
+  one-time Apps Script in Jordan's own sheet (key-protected). Updates and backup work as before;
+  *Copy restore code* moves everything to another phone. Inside Claude it still uses the connectors.
+- All nine acceptance scenarios pass in both places.
+
 ## v6 — 2026-10-25 (first full-use version)
 - **Backup and restore through the sheet.** Every sheet update also writes the whole app state
   to column J. On a new phone, browser or home-screen icon, More → paste the sheet link →

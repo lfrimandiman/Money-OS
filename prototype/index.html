@@ -223,6 +223,7 @@ textarea.inp{min-height:76px;padding:12px 14px;resize:vertical;line-height:1.4}
 .note.bad{background:var(--badBg);color:var(--bad)}
 .note.good{background:var(--goodBg);color:var(--good)}
 .tone-good{color:var(--good)}
+.steps{margin:0;padding-left:20px;display:grid;gap:6px}
 .tone-warn{color:var(--warn)}
 .tone-bad{color:var(--bad)}
 .note b{font-weight:700}
@@ -1831,6 +1832,93 @@ function sheetIdFrom(text){
   const t = String(text || "").trim(), m = t.match(/\/d\/([A-Za-z0-9_-]{20,})/);
   return m ? m[1] : /^[A-Za-z0-9_-]{20,}$/.test(t) ? t : null;
 }
+/* Two ways to reach the sheet. Inside Claude (the page is framed) the app uses Jordan's
+   claude.ai connectors. As its own home-screen app it talks to a small Apps Script that
+   lives in his sheet, guarded by a key only his phone and the script know. */
+const HOSTED = window.top === window && !window.claude;
+const HOOK_RE = /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec/;
+function hookFrom(text){
+  const t = String(text || "").trim(), m = t.match(HOOK_RE);
+  if(!m) return null;
+  const k = (t.match(/[?&]k=([A-Za-z0-9]+)/) || [])[1];
+  return {hook:m[0], key:k || null};
+}
+const hookCode = sh => sh.hook + "?k=" + sh.key;
+async function hookCall(sh, body){
+  let r;
+  try{
+    r = body ? await fetch(sh.hook + "?k=" + sh.key, {method:"POST", body:JSON.stringify(body)})
+             : await fetch(sh.hook + "?k=" + sh.key + "&a=read");
+  }catch(e){ throw {code:"offline"}; }
+  let j; try{ j = await r.json(); }catch(e){ throw {code:"not_script"}; }
+  if(!j.ok) throw {code:j.error || "script_error"};
+  return j;
+}
+function hookError(e){
+  const c = e && e.code;
+  if(c === "offline") return "! Could not reach your sheet. Check your internet and try again.";
+  if(c === "not_script") return "! That link did not answer like the Money OS script. Check Who has access is set to Anyone, then deploy again.";
+  if(c === "key") return "! The key does not match. Copy the script from this app again and redeploy it.";
+  if(c === "empty") return "! No Money OS backup in that sheet yet. Update it from the phone that has your data first.";
+  return "! The sheet script had a problem (" + (c || "unknown") + "). Try again.";
+}
+function newKey(){
+  const a = new Uint8Array(18); crypto.getRandomValues(a);
+  return Array.from(a, b => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[b % 62]).join("");
+}
+function hookScript(key){
+  return `// Money OS — sheet link. Paste all of this into Extensions → Apps Script.
+const KEY = "${key}";
+function out(o){ return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
+function sheet(){ return SpreadsheetApp.getActiveSpreadsheet().getSheets()[0]; }
+function doGet(e){
+  if(e.parameter.k !== KEY) return out({ok:false, error:"key"});
+  const v = sheet().getRange("J1:J400").getValues().map(r => String(r[0])).filter(String);
+  return out({ok:true, url:SpreadsheetApp.getActiveSpreadsheet().getUrl(),
+    backup: v[0] === "MONEYOS_BACKUP_V1" ? v.slice(1).join("") : null});
+}
+function doPost(e){
+  if(e.parameter.k !== KEY) return out({ok:false, error:"key"});
+  const b = JSON.parse(e.postData.contents), sh = sheet();
+  sh.getRange("A1:J5000").clearContent();
+  const w = Math.max.apply(null, b.rows.map(r => r.length));
+  sh.getRange(1, 1, b.rows.length, w).setValues(b.rows.map(r => r.concat(Array(w - r.length).fill(""))));
+  sh.getRange(1, 10, b.backup.length, 1).setValues(b.backup);
+  return out({ok:true, url:SpreadsheetApp.getActiveSpreadsheet().getUrl()});
+}`;
+}
+let hookKey = null;
+function hookSheet(){
+  hookKey = hookKey || newKey();
+  openSheet({title:"Connect my sheet", key:"hook", body:() => `
+    <p class="sm">One-time setup, about two minutes. You make the sheet in your own Google account;
+      the app only gets a private link to it.</p>
+    <ol class="sm steps">
+      <li>Open <a class="link" href="https://sheets.new" target="_blank" rel="noopener">sheets.new</a> and name it <b>Money OS — live data</b>.</li>
+      <li>In the sheet: <b>Extensions → Apps Script</b>. Delete what is there and paste the script below.</li>
+      <li><b>Deploy → New deployment</b>, type <b>Web app</b>. Execute as <b>Me</b>, Who has access
+        <b>Anyone</b>. Tap Deploy and allow access.</li>
+      <li>Copy the <b>Web app URL</b> and paste it here.</li>
+    </ol>
+    <button class="btn alt" data-act="copyscript">Copy the script</button>
+    <textarea class="inp num" id="hookscript" readonly rows="6" style="font-family:var(--mono);font-size:11.5px">${esc(hookScript(hookKey))}</textarea>
+    <label class="f"><span class="flab">Web app URL</span>
+      <input class="inp" id="hookurl" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off"></label>
+    <button class="btn" data-act="hookgo">Connect</button>
+    <p class="sm">The key inside the script is what keeps strangers out. Don't share the script or the link.</p>
+    <button class="btn alt" data-act="close">Cancel</button>`});
+}
+async function connectHook(){
+  const h = hookFrom(document.getElementById("hookurl").value);
+  if(!h){ toast("Paste the Web app URL — it starts with https://script.google.com/macros/s/"); return; }
+  const sh = {hook:h.hook, key:hookKey};
+  toast("Checking your sheet…");
+  try{
+    const j = await hookCall(sh);
+    S.sheet = Object.assign(sh, {url:j.url || "https://docs.google.com/spreadsheets"}); S.autoSync = true; hookKey = null;
+    save(); closeSheet(stack.length); render(); await syncSheet();
+  }catch(e){ toast(hookError(e)); }
+}
 async function mcpNS(){
   try{ return window.claude && window.claude.use ? await window.claude.use("mcp") : null; }catch(e){ return null; }
 }
@@ -1863,6 +1951,16 @@ function sheetRows(){
 }
 async function syncSheet(){
   if(!S.sheet || !isReal()) return;   // sample data never reaches the sheet
+  if(S.sheet.hook){
+    setSync("Updating your sheet…");
+    try{
+      const j = await hookCall(S.sheet, {rows:sheetRows(), backup:backupRows()});
+      if(j.url) S.sheet.url = j.url;
+      S.sheet.last = new Date().toISOString(); save();
+      setSync("✓ Sheet updated " + new Date(S.sheet.last).toLocaleTimeString([], {hour:"numeric", minute:"2-digit"}) + ".", "good");
+    }catch(e){ setSync(hookError(e), "bad"); }
+    return;
+  }
   const mcp = await mcpNS();
   if(!mcp){ setSync("Open the app inside Claude to update the sheet.", "warn"); return; }
   setSync("Updating your sheet…");
@@ -1882,6 +1980,24 @@ function backupRows(){
   for(let i = 0; i < json.length; i += CHUNK) rows.push([json.slice(i, i + CHUNK)]);
   return rows;
 }
+function applyBackup(json, sheet){
+  const data = JSON.parse(json);
+  if(!Array.isArray(data.accounts) || !Array.isArray(data.txns) || !data.accounts.length) throw {code:"bad_backup"};
+  S = Object.assign(data, {mode:"real", theme:S.theme || data.theme, sheet});
+  if(S.autoSync == null) S.autoSync = true;
+  restoreArmed = false; save(); screenName = "home"; closeSheet(stack.length); render(); window.scrollTo(0,0);
+  toast("Restored " + S.accounts.length + " accounts and " + S.txns.length + " entries from your sheet.");
+}
+async function restoreHook(h){
+  setSync("Reading your sheet…");
+  try{
+    const j = await hookCall(h);
+    if(!j.backup) throw {code:"empty"};
+    applyBackup(j.backup, {hook:h.hook, key:h.key, url:j.url || "https://docs.google.com/spreadsheets"});
+  }catch(e){
+    setSync(e && (e.code === "bad_backup" || e instanceof SyntaxError) ? "! The backup in that sheet is damaged. Update it again from the phone that has your data." : hookError(e), "bad");
+  }
+}
 async function restoreSheet(sid){
   const mcp = await mcpNS();
   if(!mcp){ setSync("Open the app inside Claude to restore from the sheet.", "warn"); return; }
@@ -1891,12 +2007,7 @@ async function restoreSheet(sid){
     const p = (r && r.payload) || {}, vals = p.values || (p.valueRange && p.valueRange.values) || [];
     const cells = vals.map(row => String((row && row[0]) || ""));
     if(cells[0] !== BACKUP_TAG){ setSync("! No Money OS backup in that sheet yet. Update it from the phone that has your data first.", "bad"); return; }
-    const data = JSON.parse(cells.slice(1).join(""));
-    if(!Array.isArray(data.accounts) || !Array.isArray(data.txns) || !data.accounts.length) throw {code:"bad_backup"};
-    S = Object.assign(data, {mode:"real", theme:S.theme || data.theme, sheet:{id:sid, url:sheetUrl(sid)}});
-    if(S.autoSync == null) S.autoSync = true;
-    restoreArmed = false; save(); screenName = "home"; closeSheet(stack.length); render(); window.scrollTo(0,0);
-    toast("Restored " + S.accounts.length + " accounts and " + S.txns.length + " entries from your sheet.");
+    applyBackup(cells.slice(1).join(""), {id:sid, url:sheetUrl(sid)});
   }catch(e){
     setSync(e && (e.code === "bad_backup" || e instanceof SyntaxError) ? "! The backup in that sheet is damaged. Update it again from the phone that has your data."
       : syncError(e, "Google Sheets"), "bad");
@@ -1939,19 +2050,21 @@ function linkSection(){
       <span>Update the sheet after every change<br><span class="sm">Otherwise only when you tap Update now</span></span>
       <span class="knob"></span></button>
     <button class="btn alt" data-act="syncnow">Update now</button>
+    ${S.sheet.hook ? `<button class="btn alt sm" data-act="copycode">Copy restore code for another phone</button>` : ""}
     <button class="link" data-act="unlink">Stop updating this sheet</button>` : `
     ${isReal() ? `
     <p class="sm">Keep a copy of your figures in a Google Sheet you own. ChatGPT reads it with its
       Google Drive connector and Claude with Google Sheets, so both work from the same numbers.
       It also backs up your data. Nothing is sent until you tap.</p>
-    <button class="btn" data-act="mksheet">Create my Money OS sheet</button>` : `
+    ${HOSTED ? `<button class="btn" data-act="hooksetup">Connect my sheet</button>`
+             : `<button class="btn" data-act="mksheet">Create my Money OS sheet</button>`}` : `
     <p class="sm">Set up your own money first (above), then link a sheet here. Already set up on
-      another phone or browser? Paste your Money OS sheet link to bring your data here.</p>`}
-    <label class="f"><span class="flab">${isReal() ? "Or use a sheet you already have" : "Your Money OS sheet"}</span>
-      <input class="inp" id="sheetlink" placeholder="Paste the Google Sheet link" autocomplete="off"></label>
+      another phone or browser? Paste your ${HOSTED ? "restore code" : "Money OS sheet link"} to bring your data here.</p>`}
+    <label class="f"><span class="flab">${HOSTED ? "Restore code from your other phone" : isReal() ? "Or use a sheet you already have" : "Your Money OS sheet"}</span>
+      <input class="inp" id="sheetlink" placeholder="${HOSTED ? "Paste the restore code" : "Paste the Google Sheet link"}" autocomplete="off"></label>
     <div class="grid2">
-      ${isReal() ? `<button class="btn alt sm" style="width:100%" data-act="usesheet">Send my data there</button>` : ""}
-      <button class="btn alt sm" style="width:100%${isReal() ? "" : ";grid-column:1/-1"}" data-act="restore">${restoreArmed ? "Tap again to replace this phone's data" : "Restore from it"}</button>
+      ${isReal() && !HOSTED ? `<button class="btn alt sm" style="width:100%" data-act="usesheet">Send my data there</button>` : ""}
+      <button class="btn alt sm" style="width:100%${isReal() && !HOSTED ? "" : ";grid-column:1/-1"}" data-act="restore">${restoreArmed ? "Tap again to replace this phone's data" : "Restore from it"}</button>
     </div>`}
     <p id="syncmsg" class="sm${syncMsg.tone ? " tone-" + syncMsg.tone : ""}" aria-live="polite">${esc(msg)}</p>
   </section>`;
@@ -2254,12 +2367,22 @@ document.addEventListener("click", e => {
       if(!sid){ toast("That does not look like a Google Sheet link."); break; }
       S.sheet = {id:sid, url:sheetUrl(sid)}; S.autoSync = true; save(); render(); syncSheet(); break; }
     case "restore": {
-      const sid = sheetIdFrom(document.getElementById("sheetlink").value);
-      if(!sid){ toast("Paste your Google Sheet link first."); break; }
+      const raw = document.getElementById("sheetlink").value, h = hookFrom(raw);
+      const sid = h ? null : sheetIdFrom(raw);
+      if(h && !h.key){ toast("That code is missing its key. Copy it again from your other phone."); break; }
+      if(!h && !sid){ toast(HOSTED ? "Paste the restore code first." : "Paste your Google Sheet link first."); break; }
       if(isReal() && !restoreArmed){ restoreArmed = true; const keep = document.getElementById("sheetlink").value; render();
         const inp = document.getElementById("sheetlink"); if(inp) inp.value = keep;
         setTimeout(() => { if(restoreArmed){ restoreArmed = false; render(); } }, 5000); break; }
-      restoreSheet(sid); break; }
+      if(h) restoreHook(h); else restoreSheet(sid); break; }
+    case "hooksetup": hookSheet(); break;
+    case "hookgo": connectHook(); break;
+    case "copyscript": case "copycode": {
+      const text = a === "copyscript" ? document.getElementById("hookscript").value : hookCode(S.sheet);
+      const ok = a === "copyscript" ? "Script copied. Paste it in Apps Script." : "Restore code copied. Keep it private.";
+      try{ navigator.clipboard.writeText(text).then(() => toast(ok), () => toast("Copy blocked — select the text and copy it by hand.")); }
+      catch(e){ toast("Copy blocked — select the text and copy it by hand."); }
+      break; }
     case "syncnow": syncSheet(); break;
     case "autosync": S.autoSync = S.autoSync === false; save(); render(); break;
     case "unlink": S.sheet = null; syncMsg = {text:"", tone:""}; save(); render();

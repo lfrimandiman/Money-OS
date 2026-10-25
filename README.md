@@ -6,7 +6,10 @@ Nothing connects to a bank, e-wallet, inbox, calendar or sheet, and nothing can 
 
 ## Run it
 
-- **On the phone:** https://claude.ai/artifact/TcPwWCbVGJQq3gDpNxbLE6 (private — Jordan only).
+- **As an app on the phone:** https://lfrimandiman.github.io/Money-OS/ — open in Safari, Share →
+  Add to Home Screen (Open as Web App on). Built from `prototype/app.html` by `sh site/build.sh`
+  into `docs/`, which GitHub Pages serves. Figures stay on the phone; nothing real is in this repo.
+- **Inside Claude:** https://claude.ai/artifact/TcPwWCbVGJQq3gDpNxbLE6 (private — Jordan only).
 - **Locally:** open `prototype/index.html` in any browser. One file, no install, no server, no sign-in.
   At 390×844 it fills a phone screen; wider screens show the same column centred.
 
