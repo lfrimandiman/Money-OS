@@ -2,6 +2,14 @@
 
 One entry per version, newest first.
 
+## v4 — 2026-10-25
+- More → **Use with ChatGPT or Claude**: "Copy for ChatGPT / Claude" builds a plain-text
+  snapshot of this month (balances, Spendable, pool and pace, savings, cards, bills, every entry,
+  plus a short note on how the figures work) from `calc()`, and copies it. Paste it into either
+  chat and ask. Nothing is sent anywhere by the app. If the phone blocks copying, the text is
+  selected so it can be copied by hand.
+- All nine acceptance scenarios pass.
+
 ## v3 — 2026-10-25
 - Savings cap (Jordan's ruling, Product HQ): the recommendation is now
   min(25% of income received, income received − bills due this month), floored at 0, rounded to
