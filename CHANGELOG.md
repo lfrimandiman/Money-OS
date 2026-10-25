@@ -2,6 +2,15 @@
 
 One entry per version, newest first.
 
+## v8 — 2026-10-25
+- **First open is a welcome, not sample figures.** Choices: *Set up my money*, *I already use it
+  on another phone* (restore), or *Look around with sample data first*.
+- **Setup in four steps** (accounts, cards, bills, goal) and a review. Under each step,
+  "Your Money OS so far" builds as you type (Total Balance, cards owed, bills, Spendable),
+  from the same `calc()` as the app.
+- Erasing your data on the phone returns to the welcome.
+- All nine acceptance scenarios pass.
+
 ## v7 — 2026-10-25
 - **Opens like an app.** The app now has its own home on GitHub Pages
   (https://lfrimandiman.github.io/Money-OS/) with a Money OS icon, name, cream status bar and an
