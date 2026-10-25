@@ -1862,17 +1862,47 @@ function sheetRows(){
   return rows;
 }
 async function syncSheet(){
-  if(!S.sheet) return;
+  if(!S.sheet || !isReal()) return;   // sample data never reaches the sheet
   const mcp = await mcpNS();
   if(!mcp){ setSync("Open the app inside Claude to update the sheet.", "warn"); return; }
   setSync("Updating your sheet…");
   try{
-    await mcp.callTool("Google Sheets", "batch_clear_values", {spreadsheetId:S.sheet.id, ranges:["A1:H5000"]});
+    await mcp.callTool("Google Sheets", "batch_clear_values", {spreadsheetId:S.sheet.id, ranges:["A1:J5000"]});
     await mcp.callTool("Google Sheets", "update_values", {spreadsheetId:S.sheet.id, range:"A1", values:sheetRows()});
+    await mcp.callTool("Google Sheets", "update_values", {spreadsheetId:S.sheet.id, range:"J1", values:backupRows()});
     S.sheet.last = new Date().toISOString(); save();
     setSync("✓ Sheet updated " + new Date(S.sheet.last).toLocaleTimeString([], {hour:"numeric", minute:"2-digit"}) + ".", "good");
   }catch(e){ setSync(syncError(e, "Google Sheets"), "bad"); }
 }
+/* Column J holds the whole app state as JSON, split into cells (a cell takes 50,000
+   characters), so another phone or browser can restore exactly what this one has. */
+const BACKUP_TAG = "MONEYOS_BACKUP_V1", CHUNK = 40000;
+function backupRows(){
+  const json = JSON.stringify(Object.assign({}, S, {sheet:null})), rows = [[BACKUP_TAG]];
+  for(let i = 0; i < json.length; i += CHUNK) rows.push([json.slice(i, i + CHUNK)]);
+  return rows;
+}
+async function restoreSheet(sid){
+  const mcp = await mcpNS();
+  if(!mcp){ setSync("Open the app inside Claude to restore from the sheet.", "warn"); return; }
+  setSync("Reading your sheet…");
+  try{
+    const r = await mcp.callTool("Google Sheets", "get_values", {spreadsheetId:sid, range:"J1:J400"});
+    const p = (r && r.payload) || {}, vals = p.values || (p.valueRange && p.valueRange.values) || [];
+    const cells = vals.map(row => String((row && row[0]) || ""));
+    if(cells[0] !== BACKUP_TAG){ setSync("! No Money OS backup in that sheet yet. Update it from the phone that has your data first.", "bad"); return; }
+    const data = JSON.parse(cells.slice(1).join(""));
+    if(!Array.isArray(data.accounts) || !Array.isArray(data.txns) || !data.accounts.length) throw {code:"bad_backup"};
+    S = Object.assign(data, {mode:"real", theme:S.theme || data.theme, sheet:{id:sid, url:sheetUrl(sid)}});
+    if(S.autoSync == null) S.autoSync = true;
+    restoreArmed = false; save(); screenName = "home"; closeSheet(stack.length); render(); window.scrollTo(0,0);
+    toast("Restored " + S.accounts.length + " accounts and " + S.txns.length + " entries from your sheet.");
+  }catch(e){
+    setSync(e && (e.code === "bad_backup" || e instanceof SyntaxError) ? "! The backup in that sheet is damaged. Update it again from the phone that has your data."
+      : syncError(e, "Google Sheets"), "bad");
+  }
+}
+let restoreArmed = false;
 function scheduleSync(){
   if(!S.sheet || S.autoSync === false) return;
   clearTimeout(syncTimer); syncTimer = setTimeout(syncSheet, 2000);
@@ -1910,13 +1940,19 @@ function linkSection(){
       <span class="knob"></span></button>
     <button class="btn alt" data-act="syncnow">Update now</button>
     <button class="link" data-act="unlink">Stop updating this sheet</button>` : `
+    ${isReal() ? `
     <p class="sm">Keep a copy of your figures in a Google Sheet you own. ChatGPT reads it with its
       Google Drive connector and Claude with Google Sheets, so both work from the same numbers.
-      Nothing is sent until you tap.</p>
-    <button class="btn" data-act="mksheet">Create my Money OS sheet</button>
-    <label class="f"><span class="flab">Or use a sheet you already made</span>
+      It also backs up your data. Nothing is sent until you tap.</p>
+    <button class="btn" data-act="mksheet">Create my Money OS sheet</button>` : `
+    <p class="sm">Set up your own money first (above), then link a sheet here. Already set up on
+      another phone or browser? Paste your Money OS sheet link to bring your data here.</p>`}
+    <label class="f"><span class="flab">${isReal() ? "Or use a sheet you already have" : "Your Money OS sheet"}</span>
       <input class="inp" id="sheetlink" placeholder="Paste the Google Sheet link" autocomplete="off"></label>
-    <button class="btn alt sm" data-act="usesheet">Use this sheet</button>`}
+    <div class="grid2">
+      ${isReal() ? `<button class="btn alt sm" style="width:100%" data-act="usesheet">Send my data there</button>` : ""}
+      <button class="btn alt sm" style="width:100%${isReal() ? "" : ";grid-column:1/-1"}" data-act="restore">${restoreArmed ? "Tap again to replace this phone's data" : "Restore from it"}</button>
+    </div>`}
     <p id="syncmsg" class="sm${syncMsg.tone ? " tone-" + syncMsg.tone : ""}" aria-live="polite">${esc(msg)}</p>
   </section>`;
 }
@@ -2217,6 +2253,13 @@ document.addEventListener("click", e => {
       const sid = sheetIdFrom(document.getElementById("sheetlink").value);
       if(!sid){ toast("That does not look like a Google Sheet link."); break; }
       S.sheet = {id:sid, url:sheetUrl(sid)}; S.autoSync = true; save(); render(); syncSheet(); break; }
+    case "restore": {
+      const sid = sheetIdFrom(document.getElementById("sheetlink").value);
+      if(!sid){ toast("Paste your Google Sheet link first."); break; }
+      if(isReal() && !restoreArmed){ restoreArmed = true; const keep = document.getElementById("sheetlink").value; render();
+        const inp = document.getElementById("sheetlink"); if(inp) inp.value = keep;
+        setTimeout(() => { if(restoreArmed){ restoreArmed = false; render(); } }, 5000); break; }
+      restoreSheet(sid); break; }
     case "syncnow": syncSheet(); break;
     case "autosync": S.autoSync = S.autoSync === false; save(); render(); break;
     case "unlink": S.sheet = null; syncMsg = {text:"", tone:""}; save(); render();
