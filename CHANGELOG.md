@@ -2,6 +2,11 @@
 
 One entry per version, newest first.
 
+## v8.1 — 2026-10-25
+- Phones that opened v7 had its sample data saved, so they never saw the welcome. Sample data
+  that wasn't chosen (from *Look around with sample data* or *Reset demo data*) now opens on the
+  welcome. Your own data is never touched.
+
 ## v8 — 2026-10-25
 - **First open is a welcome, not sample figures.** Choices: *Set up my money*, *I already use it
   on another phone* (restore), or *Look around with sample data first*.
