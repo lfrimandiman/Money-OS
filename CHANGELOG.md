@@ -2,6 +2,17 @@
 
 One entry per version, newest first.
 
+## v3 — 2026-10-25
+- Savings cap (Jordan's ruling, Product HQ): the recommendation is now
+  min(25% of income received, income received − bills due this month), floored at 0, rounded to
+  the nearest 100. Bills due this month count paid or unpaid; bills with no amount stay out and
+  flagged. Spending and card purchases never move it, so every purchase lowers Spendable.
+- Math sheet: the savings line shows target − saved, and a new note shows how the target is set.
+  Savings screen and the adjust sheet describe the new cap.
+- Sample data: the temporary ₱3,000 on BPI Payroll is removed (opening back to 4,100); all nine
+  scenarios pass without it. Storage key bumped to v3 so older sample data is not reused.
+- All nine acceptance scenarios pass.
+
 ## v2 — 2026-10-25
 Applies Jordan's Oct 25 rulings (Product HQ) on the build decisions and UX's eleven proposals.
 - Savings recommendation default is now 25% of income received (was 15%). Still adjustable;

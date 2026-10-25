@@ -281,7 +281,7 @@ code{font-family:var(--mono);font-size:12.5px;background:var(--track);border-rad
 /* ===========================================================================
    1. STATE — fictional sample data. Nothing here is a real balance or ID.
    =========================================================================== */
-const KEY = "moneyos.trial.v2";       // v2: new sample headroom, so old v1 data is not reused
+const KEY = "moneyos.trial.v3";       // v3: sample padding removed, so older sample data is not reused
 const SAVE_RATE = 0.25;               // savings recommendation: share of income received [USER Oct 25]
 const PACE_SLACK = 0.10;              // "on track" allows spending this far ahead of the calendar [USER Oct 25]
 const TODAY_SEED = "2026-10-24";
@@ -294,7 +294,7 @@ function seed(){
     today: TODAY_SEED,
     primary: "total",                 // which Home number is visually primary
     accounts: [
-      {id:"bpi",  name:"BPI Payroll",  kind:"bank",   slot:1, open:7100,  save:false, prot:false},
+      {id:"bpi",  name:"BPI Payroll",  kind:"bank",   slot:1, open:4100,  save:false, prot:false},
       {id:"cash", name:"Cash on Hand", kind:"cash",   slot:2, open:900,   save:false, prot:false},
       {id:"bpis", name:"BPI Savings",  kind:"savings",slot:3, open:16000, save:true,  prot:true},
       {id:"bdos", name:"BDO Savings",  kind:"savings",slot:4, open:17500, save:true,  prot:true},
@@ -534,10 +534,14 @@ function calc(){
 
   const savedThisMonth = S.accounts.filter(a => a.save)
     .reduce((s,a) => s + (bal.acc[a.id] - prev.acc[a.id]), 0);
-  // 25% of income received, never more than what is actually free after obligations
-  const freeAfterDues = Math.max(0, unprotected - billsLeft - cardsOwed);
+  // 25% of income received, never more than income received − bills due this month.
+  // Spending and card purchases never move the cap, so a purchase always lowers
+  // Spendable instead of quietly lowering the target [USER Oct 25].
+  const billsDueMonth = S.payables.filter(p => p.due.slice(0,7) === ym && p.amount != null)
+    .reduce((s,p) => s + p.amount, 0);
+  const savingsCap = Math.max(0, income - billsDueMonth);
   const savingsTarget = S.savings.target != null ? S.savings.target
-    : round100(Math.min(income * SAVE_RATE, freeAfterDues));
+    : round100(Math.min(income * SAVE_RATE, savingsCap));
   const savingsLeft = Math.max(0, savingsTarget - savedThisMonth);
 
   // The pool. Every scenario in the brief falls out of this one line.
@@ -562,7 +566,7 @@ function calc(){
   const spentShare = allowance > 0 ? spent / allowance : (spent > 0 ? 1 : 0);
   const status = remaining < 0 ? "bad" : spentShare > pace + PACE_SLACK ? "warn" : "good";
 
-  return {ym, day, dim, daysLeft, bal, prev, total, unprotected, cardsOwed, spent, income, freeAfterDues,
+  return {ym, day, dim, daysLeft, bal, prev, total, unprotected, cardsOwed, spent, income, billsDueMonth, savingsCap,
     billsLeft, billsUnknown, duesThisMonth, savedThisMonth, savingsTarget, savingsLeft,
     remaining, allowance, base, jar, spentToday, todayAvail, guide, pace, spentShare, status};
 }
@@ -929,8 +933,8 @@ function savingsScreen(){
       <button class="btn alt sm" style="width:100%" data-act="saccts">Which accounts count</button>
     </div>
     <div class="note"><b>How the recommendation is made</b>
-      <span>${Math.round(SAVE_RATE*100)}% of the ${peso(c.income)} received this month, capped by what is actually free once
-      bills and card bills are covered (${peso(c.freeAfterDues)}), rounded to the nearest 100 =
+      <span>${Math.round(SAVE_RATE*100)}% of the ${peso(c.income)} received this month, capped at income received
+      minus this month's bills (${peso(c.savingsCap)}), rounded to the nearest 100 =
       ${peso(c.savingsTarget)}. Illustrative only — sample data, and expected income is never counted.</span></div>
     <div class="note"><b>Carried allowance is not savings yet</b>
       <span>Your jar holds ${pesoR(Math.max(0,c.jar))} of unspent daily allowance. It counts as savings only
@@ -1079,7 +1083,7 @@ function mathSheet(){
       ${lg("Money you can spend now", peso(c.unprotected), "")}
       ${lg("Unpaid bills due in " + MONTHS[+c.ym.slice(5,7)-1], peso(c.billsLeft), "−", "neg")}
       ${lg("Set aside for card bills", peso(c.cardsOwed), "−", "neg")}
-      ${lg("Savings still to put away", peso(c.savingsLeft), "−", "neg")}
+      ${lg("Savings still to put away — target " + peso(c.savingsTarget) + " − saved " + peso(c.savedThisMonth), peso(c.savingsLeft), "−", "neg")}
       ${lg("Spendable, rest of the month", peso(c.remaining), "", "tot")}
     </div>
     <div class="ledger">
@@ -1104,6 +1108,12 @@ function mathSheet(){
     </div>
     <p class="sm">On track while the share spent stays within ${Math.round(PACE_SLACK*100)} points of the share of
       the month gone. Spendable below zero is over the pool.</p>
+    <div class="note"><b>How the savings target is set</b>
+      <span>${S.savings.target != null ? "You set it to " + peso(c.savingsTarget) + "."
+        : Math.round(SAVE_RATE*100) + "% of " + peso(c.income) + " income received, capped at income received minus " +
+          MONTHS[+c.ym.slice(5,7)-1] + " bills (" + peso(c.income) + " − " + peso(c.billsDueMonth) + " = " +
+          peso(c.savingsCap) + "), rounded to the nearest 100 = " + peso(c.savingsTarget) + "."}
+      Spending and card purchases never change it, so every purchase lowers Spendable.</span></div>
     <div class="note"><b>Why a card purchase is only counted once</b>
       <span>It is an expense the moment you buy, and it raises what the card owes. Your bank
       balance does not move, so the amount is held back here instead. Paying the card later
@@ -1571,8 +1581,8 @@ function targetSheet(){
   const c = calc();
   openSheet({title:"Monthly savings recommendation", key:"starget", body:() => `
     <p class="sm">The recommendation is ${Math.round(SAVE_RATE*100)}% of income received this month (${peso(c.income)}),
-      held to what is free after bills and card bills (${peso(c.freeAfterDues)}) and rounded to the
-      nearest 100. Set your own figure if you prefer.</p>
+      capped at income received minus this month's bills (${peso(c.savingsCap)}) and rounded to the
+      nearest 100. Spending never lowers it. Set your own figure if you prefer.</p>
     <label class="f"><span class="flab">Amount for ${monthLabel(c.ym)}</span>
       <span class="amtbox"><span>₱</span><input class="num" type="text" inputmode="decimal" id="tgt"
         value="${c.savingsTarget}"></span></label>
