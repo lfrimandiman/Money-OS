@@ -27,15 +27,7 @@
   --ease:cubic-bezier(0.32,0.72,0,1); --t-quick:150ms; --t-std:450ms; --t-hero:550ms;
   --shadow:0 10px 30px rgba(22,19,18,.14);
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --ground:#141110; --card:#1E1A18; --ink:#F3EBDD; --soft:#A89E92; --line:#332C28;
-  --track:#2A2421; --accent:#E8584B; --ctaText:#141110;
-  --good:#7CC08F; --warn:#D9A443; --bad:#EF7B6E;
-  --goodBg:#1D2A20; --warnBg:#33290F; --badBg:#3A1D19;
-  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300;
-  --shadow:0 10px 30px rgba(0,0,0,.5);
-  color-scheme:dark;
-}}
+/* Cream is the default; dark only when switched on in More [USER Oct 25]. */
 :root[data-theme="dark"]{
   --ground:#141110; --card:#1E1A18; --ink:#F3EBDD; --soft:#A89E92; --line:#332C28;
   --track:#2A2421; --accent:#E8584B; --ctaText:#141110;
@@ -109,6 +101,14 @@ main{padding-block:4px 112px;display:grid;gap:14px}
 .lrow{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:none;border:0;border-radius:10px;padding:7px 6px;min-height:44px}
 .lrow:hover{background:var(--track)}
 .sw{flex:none;width:11px;height:11px;border-radius:3px}
+.logo{flex:none;display:grid;place-items:center;border-radius:9px;font-weight:800;letter-spacing:-.02em;line-height:1;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06);text-transform:none}
+.logo.plain{background:var(--track);color:var(--soft)}
+.seg.seg4{grid-template-columns:repeat(4,1fr)}
+.seg.seg4 button{font-size:12.5px;padding:0 2px}
+.icbtn{flex:none;width:44px;height:44px;margin:-8px -10px -8px 0;display:grid;place-items:center;border:0;background:none;color:var(--soft);border-radius:12px}
+.icbtn:active{background:var(--track)}
+.acctname{display:flex;align-items:center;gap:10px;min-width:0;font-weight:700}
+.acctname span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lname{flex:1;min-width:0;font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lshare{flex:none;font-size:11.5px;color:var(--soft);width:34px;text-align:right}
 .lamt{flex:none;font-size:14px;font-weight:700}
@@ -468,8 +468,70 @@ const ICONS = {
   close:  '<path d="M6 6l12 12M18 6 6 18"/>',
   left:   '<path d="M15 5l-7 7 7 7"/>',
   right:  '<path d="M9 5l7 7-7 7"/>',
-  down:   '<path d="M6 9l6 6 6-6"/>'
+  down:   '<path d="M6 9l6 6 6-6"/>',
+  trash:  '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/>',
+  doc:    '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>'
 };
+/* Brand badges: each bank, e-wallet and well-known merchant gets a small mark in its own
+   colours, so lists read at a glance. Drawn here (no logo files, nothing fetched); anything
+   unknown gets its initials on a plain tile. */
+const BRANDS = [
+  // banks — [key, name, mark, background, text, group]
+  ["bpi","BPI","BPI","#B11116","#fff","bank"], ["bdo","BDO","BDO","#0A3D91","#FDB913","bank"],
+  ["metrobank","Metrobank","MB","#1C3F94","#fff","bank"], ["unionbank","UnionBank","UB","#F26522","#fff","bank"],
+  ["securitybank","Security Bank","SB","#0B5BA8","#8DC63F","bank"], ["landbank","Landbank","LBP","#007A3D","#FFD200","bank"],
+  ["pnb","PNB","PNB","#003B71","#fff","bank"], ["rcbc","RCBC","RCBC","#004B8D","#fff","bank"],
+  ["chinabank","China Bank","CBC","#B5121B","#fff","bank"], ["eastwest","EastWest","EW","#5C2D91","#fff","bank"],
+  ["pbcom","PBCOM","PB","#00529B","#fff","bank"], ["psbank","PSBank","PS","#0B3B8C","#fff","bank"],
+  ["maybank","Maybank","MAY","#FFC72C","#1A1A1A","bank"], ["hsbc","HSBC","HSBC","#DB0011","#fff","bank"],
+  ["citi","Citi","citi","#003B70","#fff","bank"], ["aub","AUB","AUB","#6D1F7E","#fff","bank"],
+  ["cimb","CIMB","CIMB","#EC1C24","#fff","bank"], ["gotyme","GoTyme","GT","#00B3A4","#fff","bank"],
+  ["tonik","Tonik","tk","#6A2CF0","#fff","bank"], ["mari","MariBank","Mari","#EE4D2D","#fff","bank"],
+  ["seabank","SeaBank","Sea","#FF6B00","#fff","bank"], ["ownbank","OwnBank","OB","#00A86B","#fff","bank"],
+  // e-wallets
+  ["gcash","GCash","G","#007DFE","#fff","ewallet"], ["maya","Maya","maya","#0F0F0F","#00D26A","ewallet"],
+  ["shopeepay","ShopeePay","SP","#EE4D2D","#fff","ewallet"], ["grabpay","GrabPay","GP","#00B14F","#fff","ewallet"],
+  ["coins","Coins.ph","C","#1A4DDB","#fff","ewallet"], ["paypal","PayPal","PP","#003087","#fff","ewallet"],
+  // merchants
+  ["jollibee","Jollibee","J","#E31837","#FFD200","merchant"], ["mcdo","McDonald's","M","#DA291C","#FFC72C","merchant"],
+  ["starbucks","Starbucks","S","#00704A","#fff","merchant"], ["tims","Tim Hortons","TH","#C8102E","#fff","merchant"],
+  ["manginasal","Mang Inasal","MI","#FFD100","#D2232A","merchant"], ["maxs","Max's","MX","#B5121B","#fff","merchant"],
+  ["puregold","Puregold","P","#00843D","#FFD200","merchant"], ["smmarket","SM Supermarket","SM","#0055A4","#fff","merchant"],
+  ["robinsons","Robinsons Supermarket","R","#1B3C8C","#fff","merchant"], ["grabfood","GrabFood","GF","#00B14F","#fff","merchant"],
+  ["grab","Grab","G","#00B14F","#fff","merchant"], ["foodpanda","Foodpanda","fp","#D70F64","#fff","merchant"],
+  ["uniqlo","Uniqlo","UQ","#FF0000","#fff","merchant"], ["penshoppe","Penshoppe","P","#111","#fff","merchant"],
+  ["octagon","Octagon","O","#E30613","#fff","merchant"], ["datablitz","Datablitz","DB","#1E1E1E","#FFD200","merchant"],
+  ["shopee","Shopee","S","#EE4D2D","#fff","merchant"], ["lazada","Lazada","L","#0F146D","#F57224","merchant"],
+  ["ace","Ace Hardware","A","#E21836","#fff","merchant"], ["shell","Shell","S","#FFD500","#DD1D21","merchant"],
+  ["petron","Petron","P","#0033A0","#E4002B","merchant"], ["nlex","NLEX","N","#003DA5","#fff","merchant"],
+  ["meralco","Meralco","M","#F47920","#fff","merchant"], ["maynilad","Maynilad","M","#0072BC","#fff","merchant"],
+  ["converge","Converge","C","#4B2C83","#fff","merchant"], ["globe","Globe","G","#0056B8","#fff","merchant"],
+  ["smart","Smart","S","#00A651","#fff","merchant"], ["netflix","Netflix","N","#000","#E50914","merchant"],
+  ["spotify","Spotify","S","#1DB954","#111","merchant"], ["mercury","Mercury Drug","MD","#E31E24","#fff","merchant"],
+  ["watsons","Watsons","W","#00A0AF","#fff","merchant"], ["healthway","Healthway","H","#00857C","#fff","merchant"],
+  ["mandaue","Mandaue Foam","MF","#ED1C24","#fff","merchant"], ["nbs","National Book Store","NB","#E31B23","#fff","merchant"],
+  ["meta","Meta Ads","M","#0866FF","#fff","merchant"], ["bir","BIR","BIR","#1D3F8F","#fff","merchant"]
+].map(([key, name, mark, bg, fg, group]) => ({key, name, mark, bg, fg, group}));
+const BRAND = Object.fromEntries(BRANDS.map(b => [b.key, b]));
+const BANK_LIST = BRANDS.filter(b => b.group === "bank");
+const WALLET_LIST = BRANDS.filter(b => b.group === "ewallet");
+/* Which brand a name belongs to: the longest brand name it starts with ("BPI Payroll" → BPI). */
+function brandOf(name){
+  const n = String(name || "").toLowerCase();
+  let best = null;
+  BRANDS.forEach(b => { const k = b.name.toLowerCase();
+    if((n === k || n.startsWith(k + " ")) && (!best || k.length > best.name.length)) best = b; });
+  return best;
+}
+function logo(name, size, kind){
+  size = size || 34;
+  const b = brandOf(name), fs = m => Math.round(size * (m.length >= 4 ? .27 : m.length === 3 ? .32 : m.length === 2 ? .4 : .52));
+  if(kind === "cash") return `<span class="logo" style="width:${size}px;height:${size}px;background:#2F6A45;color:#F3ECDF;font-size:${Math.round(size*.5)}px" aria-hidden="true">₱</span>`;
+  if(b) return `<span class="logo" style="width:${size}px;height:${size}px;background:${b.bg};color:${b.fg};font-size:${fs(b.mark)}px" aria-hidden="true">${esc(b.mark)}</span>`;
+  const ini = String(name || "?").replace(/[^A-Za-z0-9 ]/g, "").split(/\s+/).filter(Boolean).slice(0,2).map(w => w[0]).join("").toUpperCase() || "?";
+  return `<span class="logo plain" style="width:${size}px;height:${size}px;font-size:${fs(ini)}px" aria-hidden="true">${esc(ini)}</span>`;
+}
+const acctLogo = (a, size) => logo(a.name, size, a.kind);
 const icon = (n, size) => `<svg class="ico" viewBox="0 0 24 24" width="${size||20}" height="${size||20}" fill="none"
   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
 const esc = s => String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -695,7 +757,7 @@ function homeScreen(){
   const legend = S.accounts.map(a => {
     const v = c.bal.acc[a.id], share = c.total > 0 ? Math.round(v/c.total*100) : 0;
     return `<button class="lrow" data-act="acct" data-id="${a.id}">
-      <span class="sw" style="background:var(--s${a.slot})"></span>
+      <span class="sw" style="background:var(--s${a.slot})"></span>${acctLogo(a, 24)}
       <span class="lname">${esc(a.name)}${a.prot ? ' <span class="sm">· protected</span>' : ""}</span>
       <span class="lshare num">${share}%</span><span class="lamt num">${pesoR(v)}</span></button>`;
   }).join("");
@@ -779,7 +841,7 @@ function homeScreen(){
     <div class="row"><span class="k">Cards owed</span><span class="sm">Set aside from spendable</span></div>
     ${S.cards.map(k => `<div class="stack8">
       <div class="item" style="padding-left:0">
-        <span class="ic">${icon("card",18)}</span>
+        ${brandOf(k.name) ? logo(k.name, 34) : `<span class="ic">${icon("card",18)}</span>`}
         <span class="itxt"><span class="it1">${esc(k.name)}</span>
           <span class="it2">Due ${dateLabel(k.due)} · Pay from ${esc(acct(k.payFrom).name)}</span></span>
         <span class="iamt num">${pesoR(c.bal.cards[k.id])}</span></div>
@@ -835,7 +897,7 @@ function txnRow(t){
   const neutral = t.kind === "transfer" || t.kind === "cardpay" || t.kind === "checkpoint";
   const sym = inflow ? "↓" : neutral ? "⇄" : "↑";
   return `<button class="item" data-act="txn" data-id="${t.id}">
-    <span class="ic ${inflow ? "in" : neutral ? "mv" : "out"}">${sym}</span>
+    ${t.kind === "expense" && t.merch ? logo(t.merch, 34) : `<span class="ic ${inflow ? "in" : neutral ? "mv" : "out"}">${sym}</span>`}
     <span class="itxt"><span class="it1">${esc(txnTitle(t))}</span><span class="it2">${esc(txnSub(t))}</span></span>
     <span class="iamt num ${inflow ? "in" : ""}">${t.kind === "checkpoint" ? signed(t.amount)
       : (inflow ? "+" : neutral ? "" : "−") + peso(t.amount)}
@@ -1040,7 +1102,7 @@ function moreScreen(){
   <section class="c stack8">
     <div class="row"><span class="k">Accounts</span><span class="sm">Tap to reconcile</span></div>
     ${S.accounts.map(a => `<button class="item" data-act="acct" data-id="${a.id}">
-      <span class="sw" style="background:var(--s${a.slot});width:11px;height:11px"></span>
+      ${acctLogo(a, 34)}
       <span class="itxt"><span class="it1">${esc(a.name)}</span>
         <span class="it2">${a.prot ? "Protected · " : "Spendable · "}${a.save ? "counts as savings" : "not savings"}</span></span>
       <span class="iamt num">${peso(c.bal.acc[a.id])}</span></button>`).join("")}
@@ -1054,7 +1116,7 @@ function moreScreen(){
       <span>Make Monthly Spendable the primary number<br><span class="sm">Remembered on this device</span></span>
       <span class="knob"></span></button>
     <button class="swrow" data-act="theme" aria-checked="${document.documentElement.dataset.theme === "dark"}">
-      <span>Dark look<br><span class="sm">Otherwise follows your phone</span></span>
+      <span>Dark look<br><span class="sm">Off = cream</span></span>
       <span class="knob"></span></button>
   </section>
 
@@ -1114,7 +1176,7 @@ function toast(msg){
 function listSheet(title, opts, current, onPick, extra){
   openSheet({title, key:"pick:"+title, body:() => `${extra || ""}
     <div style="margin:0 -18px">${opts.map(o => `<button class="srow" data-act="pick" data-v="${esc(o.v)}"
-      aria-checked="${o.v === current}">
+      aria-checked="${o.v === current}">${o.logo || ""}
       <span style="flex:1;min-width:0">${esc(o.label)}${o.sub ? `<br><span class="sub">${esc(o.sub)}</span>` : ""}</span>
       ${o.right ? `<span class="sub num">${esc(o.right)}</span>` : ""}
       ${o.v === current ? '<span aria-hidden="true">✓</span>' : ""}</button>`).join("")}</div>`,
@@ -1424,7 +1486,7 @@ function startCardPay(cardId){
 }
 /* ---- pickers ------------------------------------------------------------- */
 const acctOpts = () => { const b = balances(null);
-  return S.accounts.map(a => ({v:a.id, label:a.name, sub:(a.prot ? "protected" : "spendable"), right:peso(b.acc[a.id])})); };
+  return S.accounts.map(a => ({v:a.id, label:a.name, logo:acctLogo(a, 30), sub:(a.prot ? "protected" : "spendable"), right:peso(b.acc[a.id])})); };
 function pickMonth(){
   const base = S.today.slice(0,7), opts = [];
   for(let i = -6; i <= 1; i++) opts.push({v:addMonths(base, i), label:monthLabel(addMonths(base, i))});
@@ -1465,7 +1527,7 @@ function pickMerch(){
   if(!draft.type) return pickType();
   const list = merchantsFor(draft.type);
   listSheet("Merchant — " + draft.type,
-    list.map(m => ({v:m.name, label:m.name, sub:m.n ? (m.n + "× used, last " + m.last.slice(0,10)) : ""})),
+    list.map(m => ({v:m.name, label:m.name, logo:logo(m.name, 30), sub:m.n ? (m.n + "× used, last " + m.last.slice(0,10)) : ""})),
     draft.merch, v => { draft.merch = v; delete draft.scan.merch; closeSheet(); refresh(); },
     `<div class="stack8" style="margin-bottom:6px">
       <p class="sm">Recent and frequent choices first. Type to search, or add one that is missing.</p>
@@ -1475,10 +1537,10 @@ function pickMerch(){
 }
 function pickPay(){
   const cashAcct = S.accounts.find(a => a.kind === "cash");
-  const opts = [...(cashAcct ? [{v:"cash", label:"Cash", sub:"From " + cashAcct.name}] : []),
-    ...S.accounts.filter(a => a.kind !== "cash").map(a => ({v:"bank:"+a.id, label:a.name,
+  const opts = [...(cashAcct ? [{v:"cash", label:"Cash", logo:acctLogo(cashAcct, 30), sub:"From " + cashAcct.name}] : []),
+    ...S.accounts.filter(a => a.kind !== "cash").map(a => ({v:"bank:"+a.id, label:a.name, logo:acctLogo(a, 30),
       sub:a.kind === "ewallet" ? "E-wallet" : a.kind === "savings" ? "Savings account" : "Bank account"})),
-    ...S.cards.map(k => ({v:"card:"+k.id, label:k.name, sub:"Credit card — raises what you owe"}))];
+    ...S.cards.map(k => ({v:"card:"+k.id, label:k.name, logo:logo(k.name, 30), sub:"Credit card — raises what you owe"}))];
   const cur = draft.pay === "cash" ? "cash" : draft.pay === "card" ? "card:"+draft.card : "bank:"+draft.acct;
   listSheet("Paid with", opts, cur, v => {
     if(v === "cash"){ draft.pay = "cash"; draft.acct = defCash(); }
@@ -1614,7 +1676,7 @@ function acctSheet(id){
   openSheet({title:a.name, key:"acct:"+id, body:() => `
     <div class="c tight stack8">
       <div class="row"><span class="k">Balance now</span>
-        <span class="sw" style="background:var(--s${a.slot});width:14px;height:14px"></span></div>
+        ${acctLogo(a, 30)}</div>
       <div class="big num">${peso(b.acc[id])}</div>
       <p class="sm">Opened the month at ${peso(balances(addMonths(S.today.slice(0,7), -1)).acc[id])}.
         ${a.prot ? "Protected — in Total Balance, not in Spendable." : "Spendable money."}
@@ -1750,8 +1812,18 @@ function aiSheet(){
    right now, so the month starts from here — nothing earlier is invented. */
 let setup = null, eraseArmed = false;
 const KINDS = [["cash","Cash"],["bank","Bank"],["ewallet","E-wallet"],["savings","Savings"]];
+const newAcct = kind => ({kind, brand:"", label:"", name:"", bal:"", prot:kind === "savings", save:kind === "savings"});
+const ACCT_LABELS = ["Payroll","Main","Savings","Emergency fund","Business","Allowance"];
+const CARD_NETS = ["Visa","Mastercard","JCB","Amex"];
+/* The account's name comes from what was picked: "BPI Payroll", "GCash", "Cash on Hand". */
+function acctName(a){
+  if(a.kind === "cash") return a.name.trim() || "Cash on Hand";
+  if(a.brand === "other") return a.name.trim();
+  return a.brand ? BRAND[a.brand].name + (a.label ? " " + a.label : "") : "";
+}
+const cardName = k => k.brand === "other" ? k.name.trim() : k.brand ? BRAND[k.brand].name + " " + (k.net || "card") : "";
 function startSetup(){
-  setup = setup || {accounts:[{name:"Cash on Hand", kind:"cash", bal:"", prot:false, save:false}],
+  setup = setup || {accounts:[newAcct("cash")],
     cards:[], bills:[], goal:{name:"", target:""}};
   ob = 1; closeSheet(stack.length); render(); window.scrollTo(0,0);
 }
@@ -1762,20 +1834,28 @@ let ob = 0;   // 0 = not onboarding (or the welcome, when S.mode is "new"), 1–
 const OB_STEPS = ["Your accounts", "Credit cards", "Bills coming up", "A savings goal"];
 const onboarding = () => !!ob || S.mode === "new";
 function setupRows(step){
-  const kindSel = (i, cur) => `<select class="inp" data-setup="acct.kind" data-i="${i}" aria-label="Kind">${KINDS.map(([v,l]) =>
-    `<option value="${v}" ${v === cur ? "selected" : ""}>${l}</option>`).join("")}</select>`;
+  const opt = (v, label, cur) => `<option value="${esc(v)}" ${v === cur ? "selected" : ""}>${esc(label)}</option>`;
+  const brandSel = (field, i, cur, list, prompt) => `<select class="inp" data-setup="${field}" data-i="${i}" aria-label="${prompt}">
+    ${opt("", prompt, cur)}${list.map(b => opt(b.key, b.name, cur)).join("")}${opt("other", "Other…", cur)}</select>`;
   const fromSel = (i, cur) => `<select class="inp" data-setup="card.payFrom" data-i="${i}">${setup.accounts.map((a,j) =>
-    `<option value="${j}" ${j === cur ? "selected" : ""}>${esc(a.name || "Account " + (j+1))}</option>`).join("")}</select>`;
-  const head = (label, list, i, removable) => `<div class="row"><span class="sm">${label} ${i+1}</span>
-    ${removable ? `<button class="link" data-act="setupdel" data-list="${list}" data-i="${i}">Remove</button>` : ""}</div>`;
+    opt(String(j), acctName(a) || "Account " + (j+1), String(cur))).join("")}</select>`;
+  const head = (name, kind, list, i, removable, what) => `<div class="row"><span class="acctname">${logo(name || "?", 34, kind)}
+      <span>${esc(name || what + " " + (i+1))}</span></span>
+    ${removable ? `<button class="icbtn" data-act="setupdel" data-list="${list}" data-i="${i}" aria-label="Remove ${esc(name || what + " " + (i+1))}">${icon("trash",20)}</button>` : ""}</div>`;
   if(step === 1) return `
-    <p class="sm">Cash, bank, e-wallet and savings. Type what each one holds <b>right now</b> — the app
-      starts from today, so what already happened is inside these balances.</p>
+    <p class="sm">Pick the type, then the bank or e-wallet. You only type the balance <b>right now</b> —
+      the app starts from today.</p>
     ${setup.accounts.map((a,i) => `<div class="c tight stack8">
-      ${head("Account", "accounts", i, setup.accounts.length > 1)}
-      <input class="inp" placeholder="Name, e.g. Payroll account" value="${esc(a.name)}" data-setup="acct.name" data-i="${i}">
-      <div class="grid2">${kindSel(i, a.kind)}
-        <input class="inp num" inputmode="decimal" placeholder="₱ balance now" value="${esc(a.bal)}" data-setup="acct.bal" data-i="${i}"></div>
+      ${head(acctName(a), a.kind, "accounts", i, setup.accounts.length > 1, "Account")}
+      <div class="seg seg4" role="group" aria-label="Type">${KINDS.map(([v,l]) =>
+        `<button data-act="setupkind" data-i="${i}" data-v="${v}" aria-pressed="${a.kind === v}">${l}</button>`).join("")}</div>
+      ${a.kind === "cash" ? "" : `
+      <div class="grid2">
+        ${brandSel("acct.brand", i, a.brand, a.kind === "ewallet" ? WALLET_LIST : BANK_LIST, a.kind === "ewallet" ? "Which e-wallet" : "Which bank")}
+        <select class="inp" data-setup="acct.label" data-i="${i}" aria-label="What it's for">
+          ${opt("", "What it's for", a.label)}${ACCT_LABELS.map(l => opt(l, l, a.label)).join("")}</select></div>`}
+      ${a.brand === "other" ? `<input class="inp" placeholder="Account name" value="${esc(a.name)}" data-setup="acct.name" data-i="${i}">` : ""}
+      <input class="inp num" inputmode="decimal" placeholder="₱ balance now" value="${esc(a.bal)}" data-setup="acct.bal" data-i="${i}">
       <button class="swrow" data-act="setuptog" data-key="prot" data-i="${i}" aria-checked="${a.prot}">
         <span>Protected from spending<br><span class="sm">Kept out of Monthly Spendable</span></span><span class="knob"></span></button>
       <button class="swrow" data-act="setuptog" data-key="save" data-i="${i}" aria-checked="${a.save}">
@@ -1783,10 +1863,20 @@ function setupRows(step){
     </div>`).join("")}
     <button class="btn alt sm" data-act="setupadd" data-list="accounts">+ Add an account</button>`;
   if(step === 2) return `
-    <p class="sm">What each card owes right now. It is set aside from what you can spend. No cards? Skip this.</p>
+    <p class="sm">Pick the bank, then read your latest statement so the app knows what's due —
+      or type it. No cards? Skip this.</p>
     ${setup.cards.map((k,i) => `<div class="c tight stack8">
-      ${head("Card", "cards", i, true)}
-      <input class="inp" placeholder="Card name" value="${esc(k.name)}" data-setup="card.name" data-i="${i}">
+      ${head(cardName(k), "card", "cards", i, true, "Card")}
+      <div class="grid2">
+        ${brandSel("card.brand", i, k.brand, BANK_LIST, "Which bank")}
+        <select class="inp" data-setup="card.net" data-i="${i}" aria-label="Card type">
+          ${opt("", "Card type", k.net)}${CARD_NETS.map(n => opt(n, n, k.net)).join("")}</select></div>
+      ${k.brand === "other" ? `<input class="inp" placeholder="Card name" value="${esc(k.name)}" data-setup="card.name" data-i="${i}">` : ""}
+      <label class="btn alt sm" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px">${icon("doc",18)}
+        Read my latest statement (PDF)<input type="file" accept="application/pdf,.pdf" data-stmt="${i}" hidden></label>
+      ${k.needPass ? `<div style="display:flex;gap:8px"><input class="inp" type="password" id="stmtpw${i}" placeholder="Statement password" autocomplete="off">
+        <button class="btn sm" data-act="stmtpw" data-i="${i}">Open</button></div>` : ""}
+      ${k.stmtMsg ? `<p class="sm tone-${k.stmtTone || "good"}" aria-live="polite">${esc(k.stmtMsg)}</p>` : ""}
       <div class="grid2">
         <input class="inp num" inputmode="decimal" placeholder="₱ owed now" value="${esc(k.owed)}" data-setup="card.owed" data-i="${i}">
         <input class="inp num" type="date" value="${esc(k.due)}" data-setup="card.due" data-i="${i}" aria-label="Due date"></div>
@@ -1797,8 +1887,9 @@ function setupRows(step){
     <p class="sm">Bills still to pay. Leave the amount blank if you don't know it yet — it stays marked
       <b>?</b> and is never guessed. You can add more later under More.</p>
     ${setup.bills.map((b,i) => `<div class="c tight stack8">
-      ${head("Bill", "bills", i, true)}
-      <input class="inp" placeholder="Bill name, e.g. Internet" value="${esc(b.name)}" data-setup="bill.name" data-i="${i}">
+      <div class="row"><span class="acctname">${logo(b.name || "?", 34)}<span>${esc(b.name.trim() || "Bill " + (i+1))}</span></span>
+        <button class="icbtn" data-act="setupdel" data-list="bills" data-i="${i}" aria-label="Remove ${esc(b.name.trim() || "bill " + (i+1))}">${icon("trash",20)}</button></div>
+      <input class="inp" placeholder="Bill name, e.g. Meralco" value="${esc(b.name)}" data-setup="bill.name" data-i="${i}">
       <div class="grid2">
         <input class="inp num" inputmode="decimal" placeholder="₱ — blank if unknown" value="${esc(b.amount)}" data-setup="bill.amount" data-i="${i}">
         <input class="inp num" type="date" value="${esc(b.due)}" data-setup="bill.due" data-i="${i}" aria-label="Due date"></div>
@@ -1811,16 +1902,94 @@ function setupRows(step){
       <input class="inp" placeholder="Goal, e.g. Travel fund" value="${esc(setup.goal.name)}" data-setup="goal.name">
       <input class="inp num" inputmode="decimal" placeholder="₱ target" value="${esc(setup.goal.target)}" data-setup="goal.target"></div>`;
 }
+
+/* ---- reading a card statement --------------------------------------------- */
+/* The PDF is read on this phone with pdf.js; nothing is uploaded. Bank statements are
+   often password-protected — the password is asked for once and never stored. What is
+   found is filled in for checking; what isn't found stays blank, never guessed. */
+let pdfjsP = null;
+const stmtBuf = {};
+function loadPdfjs(){
+  if(window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+  return pdfjsP = pdfjsP || new Promise((ok, no) => {
+    const el = document.createElement("script");
+    el.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+    el.onload = () => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"; ok(window.pdfjsLib); };
+    el.onerror = () => { pdfjsP = null; no({code:"offline"}); };
+    document.head.appendChild(el);
+  });
+}
+async function pdfText(buf, password){
+  const lib = await loadPdfjs();
+  const doc = await lib.getDocument({data:buf.slice(0), password, isEvalSupported:false}).promise;
+  let out = "";
+  for(let n = 1; n <= Math.min(doc.numPages, 8); n++){
+    const tc = await (await doc.getPage(n)).getTextContent();
+    out += tc.items.map(x => x.str).join(" ") + "\n";
+  }
+  return out;
+}
+const MON = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
+function isoFrom(txt){
+  const t = txt.trim().replace(/\./g, "");
+  let m = t.match(/^([A-Za-z]{3,9})\s+(\d{1,2}),?\s+(\d{4})$/);
+  if(m){ const mo = MON.indexOf(m[1].slice(0,3).toLowerCase()); if(mo >= 0) return m[3] + "-" + String(mo+1).padStart(2,"0") + "-" + m[2].padStart(2,"0"); }
+  m = t.match(/^(\d{1,2})\s+([A-Za-z]{3,9}),?\s+(\d{4})$/);
+  if(m){ const mo = MON.indexOf(m[2].slice(0,3).toLowerCase()); if(mo >= 0) return m[3] + "-" + String(mo+1).padStart(2,"0") + "-" + m[1].padStart(2,"0"); }
+  m = t.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);       // mm/dd/yyyy, the usual PH format
+  if(m){ const y = m[3].length === 2 ? "20" + m[3] : m[3]; return y + "-" + m[1].padStart(2,"0") + "-" + m[2].padStart(2,"0"); }
+  return null;
+}
+function parseStatement(raw){
+  const t = raw.replace(/\s+/g, " ");
+  const AMT = "(?:PHP|Php|P|₱)?\\s*([0-9]{1,3}(?:,[0-9]{3})+(?:\\.[0-9]{2})?|[0-9]+\\.[0-9]{2})";
+  const num = m => m ? r2(+m[1].replace(/,/g, "")) : null;
+  const minRe = new RegExp("minimum\\s+(?:amount\\s+|payment\\s+)?due\\s*:?\\s*" + AMT, "i");
+  const min = num(t.match(minRe));
+  const rest = t.replace(new RegExp(minRe.source, "ig"), " ");
+  const total = num(rest.match(new RegExp("(?:total\\s+amount\\s+due|total\\s+payment\\s+due|statement\\s+balance|new\\s+balance|total\\s+outstanding\\s+balance|outstanding\\s+balance|amount\\s+due)\\s*:?\\s*" + AMT, "i")));
+  const dm = t.match(/(?:payment\s+due\s+date|due\s+date|pay(?:ment)?\s+on\s+or\s+before)\s*:?\s*([A-Za-z]{3,9}\.?\s+\d{1,2},?\s+\d{4}|\d{1,2}\s+[A-Za-z]{3,9}\.?,?\s+\d{4}|\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i);
+  return {total, min, due:dm ? isoFrom(dm[1]) : null};
+}
+async function readStatement(i, password){
+  const k = setup.cards[i];
+  k.stmtMsg = "Reading your statement…"; k.stmtTone = "warn"; render();
+  try{
+    const f = parseStatement(await pdfText(stmtBuf[i], password));
+    k.needPass = false;
+    if(f.total != null) k.owed = String(f.total);
+    if(f.due) k.due = f.due;
+    const got = [f.total != null && "amount due " + peso(f.total), f.min != null && "minimum " + peso(f.min), f.due && "due " + dateLabel(f.due)].filter(Boolean);
+    k.stmtMsg = got.length ? "✓ Found " + got.join(", ") + ". Check them below." : "? Couldn't find the amounts in this statement. Type what it says below.";
+    k.stmtTone = got.length ? "good" : "warn";
+  }catch(e){
+    if(e && e.name === "PasswordException"){
+      k.needPass = true;
+      k.stmtMsg = password ? "! That password didn't open it. Try again." : "This statement has a password (often your birthday or the last digits of the card). It stays on this phone.";
+      k.stmtTone = password ? "bad" : "warn";
+    }else{
+      k.stmtMsg = e && e.code === "offline" ? "! The PDF reader needs the internet the first time. Try again online, or type the amounts." : "! Couldn't read that file. Type the amounts from the statement instead.";
+      k.stmtTone = "bad";
+    }
+  }
+  render();
+}
+document.addEventListener("change", e => {
+  const i = e.target.dataset && e.target.dataset.stmt;
+  if(i == null || !setup || !e.target.files || !e.target.files[0]) return;
+  e.target.files[0].arrayBuffer().then(buf => { stmtBuf[i] = buf; readStatement(+i); });
+});
+
 /* The state the setup would start, or null while no account has a name. */
 function buildReal(){
-  const named = setup.accounts.map((a,i) => [a,i]).filter(([a]) => a.name.trim());
+  const named = setup.accounts.map((a,i) => [a,i]).filter(([a]) => acctName(a));
   if(!named.length) return null;
   let n = 1;
   const idOf = {};
   const accounts = named.map(([a,i], k) => { const id = "a" + (n++); idOf[i] = id;
-    return {id, name:a.name.trim(), kind:a.kind, slot:(k % 6) + 1, open:r2(+a.bal || 0), save:!!a.save, prot:!!a.prot}; });
+    return {id, name:acctName(a), kind:a.kind, slot:(k % 6) + 1, open:r2(+a.bal || 0), save:!!a.save, prot:!!a.prot}; });
   const today = localToday();
-  const cards = setup.cards.filter(k => k.name.trim()).map(k => ({id:"c" + (n++), name:k.name.trim(),
+  const cards = setup.cards.filter(k => cardName(k)).map(k => ({id:"c" + (n++), name:cardName(k),
     open:r2(+k.owed || 0), payFrom:idOf[k.payFrom] || accounts[0].id, due:k.due || today}));
   const payables = setup.bills.filter(b => b.name.trim()).map(b => {
     const known = String(b.amount).trim() !== "";
@@ -1835,7 +2004,7 @@ function buildReal(){
 }
 function obPreview(){
   const st = buildReal();
-  if(!st) return '<p class="sm">Name an account and your Money OS starts appearing here.</p>';
+  if(!st) return '<p class="sm">Pick an account and your Money OS starts appearing here.</p>';
   const keep = S; let c;
   S = st; try{ c = calc(); }finally{ S = keep; }
   return `<div class="ledger">
@@ -1844,6 +2013,7 @@ function obPreview(){
       ${st.payables.length ? `<div class="lg"><span class="op">Bills due this month</span><b>${pesoR(c.billsDueMonth)}${c.billsUnknown.length ? " + ?" : ""}</b></div>` : ""}
       <div class="lg tot${c.remaining < 0 ? " neg" : ""}"><span>Spendable, rest of ${MONTHS[+c.ym.slice(5,7)-1]}</span><b>${pesoR(c.remaining)}</b></div>
     </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">${st.accounts.map(a => acctLogo(a, 28)).join("")}${st.cards.map(k => logo(k.name, 28)).join("")}</div>
     <p class="sm">${st.accounts.length} account${st.accounts.length > 1 ? "s" : ""}${st.cards.length ? " · " + st.cards.length + " card" + (st.cards.length > 1 ? "s" : "") : ""}${st.payables.length ? " · " + st.payables.length + " bill" + (st.payables.length > 1 ? "s" : "") : ""}</p>`;
 }
 function onboardScreen(){
@@ -1902,7 +2072,7 @@ function onboardScreen(){
 }
 function finishSetup(){
   const st = buildReal();
-  if(!st){ toast("Give at least one account a name."); return; }
+  if(!st){ toast("Pick a bank or e-wallet for at least one account."); return; }
   S = st; setup = null; ob = 0; save(); screenName = "home"; closeSheet(stack.length); render(); window.scrollTo(0,0);
   toast("You're live. Every figure now comes from your own accounts.");
   scheduleSync();
@@ -2163,9 +2333,10 @@ function setupInput(e){
   const i = +e.target.dataset.i, v = e.target.value, [grp, key] = f.split(".");
   if(grp === "acct"){
     const a = setup.accounts[i]; a[key] = v;
-    if(e.type === "change" && key === "kind"){ a.prot = a.save = v === "savings"; render(); return; }
+    if(e.type === "change" && key === "label"){ if(v === "Savings" || v === "Emergency fund") a.prot = a.save = true; render(); return; }
+    if(e.type === "change" && key === "brand"){ render(); return; }
   }
-  else if(grp === "card") setup.cards[i][key] = key === "payFrom" ? +v : v;
+  else if(grp === "card"){ setup.cards[i][key] = key === "payFrom" ? +v : v; if(e.type === "change" && (key === "brand" || key === "net")){ render(); return; } }
   else if(grp === "bill") setup.bills[i][key] = v;
   else if(grp === "goal") setup.goal[key] = v;
   const pv = document.getElementById("obprev");       // the preview builds as you type
@@ -2436,15 +2607,19 @@ document.addEventListener("click", e => {
     case "aisnap": aiSheet(); break;
     case "setup": startSetup(); break;
     case "setupadd":
-      if(el.dataset.list === "accounts") setup.accounts.push({name:"", kind:"bank", bal:"", prot:false, save:false});
-      else if(el.dataset.list === "cards") setup.cards.push({name:"", owed:"", due:"", payFrom:0});
+      if(el.dataset.list === "accounts") setup.accounts.push(newAcct("bank"));
+      else if(el.dataset.list === "cards") setup.cards.push({brand:"", net:"", name:"", owed:"", due:"", payFrom:Math.max(0, setup.accounts.findIndex(a => a.kind === "bank"))});
       else setup.bills.push({name:"", amount:"", due:""});
       render(); break;
     case "setupdel": setup[el.dataset.list].splice(+el.dataset.i, 1); render(); break;
     case "setuptog": { const x = setup.accounts[+el.dataset.i]; x[el.dataset.key] = !x[el.dataset.key]; render(); break; }
     case "setupgo": finishSetup(); break;
+    case "setupkind": { const x = setup.accounts[+el.dataset.i];
+      if(x.kind !== v){ Object.assign(x, newAcct(v), {bal:x.bal}); } render(); break; }
+    case "stmtpw": { const i = +el.dataset.i, pw = document.getElementById("stmtpw" + i).value;
+      if(pw) readStatement(i, pw); break; }
     case "obnext":
-      if(ob === 1 && !buildReal()){ toast("Give at least one account a name."); break; }
+      if(ob === 1 && !buildReal()){ toast("Pick a bank or e-wallet for at least one account."); break; }
       ob = Math.min(5, ob + 1); render(); window.scrollTo(0,0); break;
     case "obprev":
       ob = ob - 1;

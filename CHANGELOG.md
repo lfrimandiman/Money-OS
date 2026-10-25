@@ -2,6 +2,21 @@
 
 One entry per version, newest first.
 
+## v9 — 2026-10-25 (Jordan's setup feedback)
+- **Less typing in setup.** Each account starts with a type (Cash, Bank, E-wallet, Savings). Then
+  you pick the bank or e-wallet from a list and what it's for (Payroll, Savings…), so the name
+  builds itself, e.g. "BPI Payroll". Savings types switch Protected and Counts toward savings on.
+- **Credit cards.** Pick the bank and card type, then *Read my latest statement (PDF)*. The
+  statement is read on the phone, never uploaded. Amount due and due date are filled in for
+  checking, and the minimum is shown. Password-protected statements ask for the password, which
+  is never stored. If nothing is found, it says so and you type the amounts.
+- **Trash icon** replaces the word "Remove".
+- **Logos.** Banks, e-wallets and well-known merchants get a badge in their own colours, on Home,
+  More, the pickers, cards and Activity. They're drawn in the app (no logo files, nothing fetched),
+  and unknown names show their initials.
+- **Cream is the default look.** Dark only when switched on in More.
+- All nine acceptance scenarios pass.
+
 ## v8.1 — 2026-10-25
 - Phones that opened v7 had its sample data saved, so they never saw the welcome. Sample data
   that wasn't chosen (from *Look around with sample data* or *Reset demo data*) now opens on the
