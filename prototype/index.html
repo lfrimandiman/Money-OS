@@ -146,8 +146,9 @@ main{padding-block:4px 112px;display:grid;gap:14px}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:none;min-height:38px;padding:0 13px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);font-size:13px;font-weight:600;white-space:nowrap}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--ctaText);border-color:var(--ink);font-weight:700}
+.nodaychip{display:inline-flex;align-items:center;gap:4px;min-height:44px}
 .mnav{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.mnav button{width:44px;height:44px;border-radius:14px;border:1.5px solid var(--line);background:var(--card);font-size:15px;font-weight:700}
+.mnav button{width:44px;height:44px;display:grid;place-items:center;border-radius:14px;border:1.5px solid var(--line);background:var(--card)}
 .empty{display:grid;gap:8px;padding:26px 18px;text-align:center;border:1.5px dashed var(--line);border-radius:20px;color:var(--soft)}
 
 /* ---- tab bar + fab -------------------------------------------------------- */
@@ -155,7 +156,9 @@ main{padding-block:4px 112px;display:grid;gap:14px}
 .tabin{max-width:440px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);align-items:center;padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px))}
 .tab{display:grid;gap:3px;justify-items:center;min-height:56px;align-content:center;border:0;background:none;font-size:10.5px;font-weight:600;color:var(--soft);border-radius:14px}
 .tab[aria-current="page"]{color:var(--ink);font-weight:700}
-.tab .ti{font-size:17px;line-height:1}
+.tab .ti{display:grid;place-items:center;height:22px}
+.ico{display:block;flex:none}
+.ic .ico{margin:auto}
 .fab{display:grid;place-items:center;justify-self:center;width:54px;height:54px;border-radius:18px;background:var(--ink);color:var(--ctaText);border:0;font-size:24px;font-weight:400;line-height:1;box-shadow:var(--shadow)}
 
 /* ---- sheets -------------------------------------------------------------- */
@@ -166,7 +169,7 @@ main{padding-block:4px 112px;display:grid;gap:14px}
 .sheet.deep{transform:translateY(100%) scale(1)}
 .shead{display:flex;align-items:center;gap:10px;padding:14px 18px 10px;border-bottom:1px solid var(--line)}
 .shead h2{flex:1;min-width:0;font-size:17px}
-.sx{width:44px;height:44px;flex:none;border-radius:14px;border:1.5px solid var(--line);background:var(--card);font-size:16px;font-weight:700}
+.sx{width:44px;height:44px;flex:none;display:grid;place-items:center;border-radius:14px;border:1.5px solid var(--line);background:var(--card)}
 .sbody{overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .sin>*{min-width:0;max-width:100%}
 .sin{max-width:440px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:14px;min-width:0;padding-block:16px calc(24px + env(safe-area-inset-bottom,0px));padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
@@ -192,6 +195,9 @@ textarea.inp{min-height:76px;padding:12px 14px;resize:vertical;line-height:1.4}
 .amtbox span{font-size:26px;font-weight:700;color:var(--soft)}
 .amtbox input{flex:1;min-width:0;border:0;background:none;outline:none;font:inherit;font-size:30px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
 .amtbox:focus-within{border-color:var(--accent)}
+.dayf{display:grid;gap:6px;min-width:0}
+.daychips{display:flex;flex-wrap:wrap;gap:7px}
+.daychips .chip{min-height:44px;display:inline-flex;align-items:center;gap:4px}
 .picker{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:52px;width:100%;min-width:0;padding:0 14px;border:1.5px solid var(--line);border-radius:15px;background:var(--card);text-align:left;font-size:15px}
 .picker .pv{flex:1;min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .picker .pv.ph{color:var(--soft);font-weight:400}
@@ -253,18 +259,18 @@ code{font-family:var(--mono);font-size:12.5px;background:var(--track);border-rad
   <div class="topin">
     <span class="brand">Money OS</span>
     <span class="sample">Sample data</span>
-    <button class="clockbtn" data-act="clock"><span aria-hidden="true">◴</span> <span id="clocklbl" class="num">—</span></button>
+    <button class="clockbtn" data-act="clock"><span data-ico="cal" data-size="16"></span> <span id="clocklbl" class="num">—</span></button>
   </div>
 </div>
 <main class="wrap" id="screen"></main>
 
 <nav class="tabbar" aria-label="Main">
   <div class="tabin">
-    <button class="tab" data-act="go" data-screen="home"><span class="ti" aria-hidden="true">◎</span>Home</button>
-    <button class="tab" data-act="go" data-screen="activity"><span class="ti" aria-hidden="true">≡</span>Activity</button>
-    <button class="fab" data-act="log" aria-label="Log a transaction">+</button>
-    <button class="tab" data-act="go" data-screen="savings"><span class="ti" aria-hidden="true">◍</span>Savings</button>
-    <button class="tab" data-act="go" data-screen="more"><span class="ti" aria-hidden="true">⋯</span>More</button>
+    <button class="tab" data-act="go" data-screen="home"><span class="ti" data-ico="home"></span>Home</button>
+    <button class="tab" data-act="go" data-screen="activity"><span class="ti" data-ico="list"></span>Activity</button>
+    <button class="fab" data-act="log" aria-label="Log a transaction"><span data-ico="plus" data-size="26"></span></button>
+    <button class="tab" data-act="go" data-screen="savings"><span class="ti" data-ico="savings"></span>Savings</button>
+    <button class="tab" data-act="go" data-screen="more"><span class="ti" data-ico="more"></span>More</button>
   </div>
 </nav>
 
@@ -276,7 +282,9 @@ code{font-family:var(--mono);font-size:12.5px;background:var(--track);border-rad
 /* ===========================================================================
    1. STATE — fictional sample data. Nothing here is a real balance or ID.
    =========================================================================== */
-const KEY = "moneyos.trial.v1";
+const KEY = "moneyos.trial.v2";       // v2: new sample headroom, so old v1 data is not reused
+const SAVE_RATE = 0.25;               // savings recommendation: share of income received [USER Oct 25]
+const PACE_SLACK = 0.10;              // "on track" allows spending this far ahead of the calendar [USER Oct 25]
 const TODAY_SEED = "2026-10-24";
 
 /* Accounts carry: slot = account colour (dataviz categorical 1-6),
@@ -287,7 +295,7 @@ function seed(){
     today: TODAY_SEED,
     primary: "total",                 // which Home number is visually primary
     accounts: [
-      {id:"bpi",  name:"BPI Payroll",  kind:"bank",   slot:1, open:4100,  save:false, prot:false},
+      {id:"bpi",  name:"BPI Payroll",  kind:"bank",   slot:1, open:7100,  save:false, prot:false},
       {id:"cash", name:"Cash on Hand", kind:"cash",   slot:2, open:900,   save:false, prot:false},
       {id:"bpis", name:"BPI Savings",  kind:"savings",slot:3, open:16000, save:true,  prot:true},
       {id:"bdos", name:"BDO Savings",  kind:"savings",slot:4, open:17500, save:true,  prot:true},
@@ -412,7 +420,29 @@ function fmt(n){
 const peso = n => "₱" + fmt(n);
 /* signed display: the sign is written once, by the caller */
 const signed = n => (n > 0 ? "+" : n < 0 ? "−" : "") + peso(Math.abs(n));
+/* Summary figures round to the peso; ledgers, entry rows and forms keep centavos. */
+const pesoR = n => "₱" + fmt(Math.round(n));
+const signedR = n => { const v = Math.round(n); return (v > 0 ? "+" : v < 0 ? "−" : "") + pesoR(Math.abs(v)); };
+const pct = f => Math.round(f*100) + "%";
 const round100 = n => Math.round(n/100)*100;
+
+/* Line icons — 24 grid, stroke 2, currentColor. Status symbols (✓ ◔ ! ?) stay text. */
+const ICONS = {
+  home:   '<path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1Z"/>',
+  list:   '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" stroke-width="3"/>',
+  savings:'<path d="M12 3v3M12 18v3"/><rect x="4" y="6" width="16" height="12" rx="3"/><path d="M14.5 10.2c-.4-.8-1.3-1.2-2.5-1.2-1.4 0-2.5.7-2.5 1.6s.9 1.3 2.5 1.6 2.5.7 2.5 1.6-1.1 1.6-2.5 1.6c-1.2 0-2.1-.4-2.5-1.2"/>',
+  more:   '<circle cx="5.5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18.5" cy="12" r="1.2"/>',
+  plus:   '<path d="M12 5v14M5 12h14"/>',
+  card:   '<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 15h4"/>',
+  clock:  '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  cal:    '<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  close:  '<path d="M6 6l12 12M18 6 6 18"/>',
+  left:   '<path d="M15 5l-7 7 7 7"/>',
+  right:  '<path d="M9 5l7 7-7 7"/>',
+  down:   '<path d="M6 9l6 6 6-6"/>'
+};
+const icon = (n, size) => `<svg class="ico" viewBox="0 0 24 24" width="${size||20}" height="${size||20}" fill="none"
+  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
 const esc = s => String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const acct = id => S.accounts.find(a => a.id === id);
 const card = id => S.cards.find(c => c.id === id);
@@ -505,10 +535,10 @@ function calc(){
 
   const savedThisMonth = S.accounts.filter(a => a.save)
     .reduce((s,a) => s + (bal.acc[a.id] - prev.acc[a.id]), 0);
-  // 15% of income received, never more than what is actually free after obligations
+  // 25% of income received, never more than what is actually free after obligations
   const freeAfterDues = Math.max(0, unprotected - billsLeft - cardsOwed);
   const savingsTarget = S.savings.target != null ? S.savings.target
-    : round100(Math.min(income * 0.15, freeAfterDues));
+    : round100(Math.min(income * SAVE_RATE, freeAfterDues));
   const savingsLeft = Math.max(0, savingsTarget - savedThisMonth);
 
   // The pool. Every scenario in the brief falls out of this one line.
@@ -527,9 +557,15 @@ function calc(){
   const daysLeft = dim - day + 1;
   const guide = daysLeft > 0 ? remaining / daysLeft : remaining;
 
+  // Pace: share of the pool spent against share of the month passed (today counts).
+  // Amber only when spending runs more than PACE_SLACK ahead; red when over the pool.
+  const pace = day / dim;
+  const spentShare = allowance > 0 ? spent / allowance : (spent > 0 ? 1 : 0);
+  const status = remaining < 0 ? "bad" : spentShare > pace + PACE_SLACK ? "warn" : "good";
+
   return {ym, day, dim, daysLeft, bal, prev, total, unprotected, cardsOwed, spent, income, freeAfterDues,
     billsLeft, billsUnknown, duesThisMonth, savedThisMonth, savingsTarget, savingsLeft,
-    remaining, allowance, base, jar, spentToday, todayAvail, guide};
+    remaining, allowance, base, jar, spentToday, todayAvail, guide, pace, spentShare, status};
 }
 
 /* ===========================================================================
@@ -564,8 +600,8 @@ function ioBars(income, expense){
   const row = (lab, v, colour) => `<div class="barrow">
       <span class="bl">${lab}</span>
       <div class="bartrack"><i style="width:${(v/max*100).toFixed(1)}%;background:${colour}"></i></div>
-      <span class="bv num">${peso(v)}</span></div>`;
-  return `<div class="bars">${row("In", income, "var(--s6)")}${row("Out", expense, "var(--s2)")}</div>`;
+      <span class="bv num">${pesoR(v)}</span></div>`;
+  return `<div class="bars">${row("In", income, "var(--ink)")}${row("Out", expense, "var(--soft)")}</div>`;
 }
 /* The carry jar — a restrained bit of motivation, not a savings claim. */
 function jarSvg(frac){
@@ -600,15 +636,15 @@ function countUp(el, from, to){
   const t0 = performance.now(), dur = 400;
   (function step(t){
     const p = Math.min(1, (t-t0)/dur), e = 1 - Math.pow(1-p, 3);
-    el.textContent = peso(from + (to-from)*e);
+    el.textContent = pesoR(from + (to-from)*e);
     if(p < 1) requestAnimationFrame(step);
-    else el.textContent = peso(to);
+    else el.textContent = pesoR(to);
   })(performance.now());
 }
 
 /* ---- HOME ---------------------------------------------------------------- */
 function homeScreen(){
-  const c = calc();
+  const c = calc(), mName = MONTHS[+c.ym.slice(5,7)-1];
   const parts = S.accounts.map(a => ({slot:a.slot, v:Math.max(0, c.bal.acc[a.id])}));
   const primaryIsTotal = S.primary === "total";
   const savingsTotal = S.accounts.filter(a => a.save).reduce((s,a) => s + c.bal.acc[a.id], 0);
@@ -620,21 +656,20 @@ function homeScreen(){
     return `<button class="lrow" data-act="acct" data-id="${a.id}">
       <span class="sw" style="background:var(--s${a.slot})"></span>
       <span class="lname">${esc(a.name)}${a.prot ? ' <span class="sm">· protected</span>' : ""}</span>
-      <span class="lshare num">${share}%</span><span class="lamt num">${peso(v)}</span></button>`;
+      <span class="lshare num">${share}%</span><span class="lamt num">${pesoR(v)}</span></button>`;
   }).join("");
 
-  const spentPct = c.allowance > 0 ? c.spent / c.allowance : 1;
-  const tone = c.remaining < 0 ? "bad" : (spentPct > 0.85 ? "warn" : "");
+  const tone = c.status === "good" ? "" : c.status;
   const jarFrac = c.base > 0 ? c.jar / (c.base*3) : 0;
 
   const dues = S.payables.filter(p => !p.paid).sort((a,b) => a.due < b.due ? -1 : 1).slice(0,3).map(p => {
     const late = p.due < S.today;
     return `<button class="item" data-act="payable" data-id="${p.id}">
-      <span class="ic">${late ? "!" : "◷"}</span>
+      <span class="ic">${late ? "!" : icon("clock",18)}</span>
       <span class="itxt"><span class="it1">${esc(p.name)}</span>
         <span class="it2">${late ? "Overdue · " : "Due "}${dateLabel(p.due)}</span></span>
       <span class="iamt num">${p.amount == null
-        ? '<span class="pill warn">? unknown</span>' : peso(p.amount)}</span></button>`;
+        ? '<span class="pill warn">? unknown</span>' : pesoR(p.amount)}</span></button>`;
   }).join("") || `<p class="sm">Nothing scheduled.</p>`;
 
   const recent = [...S.txns].sort(sortTxn).slice(0,3).map(txnRow).join("");
@@ -647,55 +682,55 @@ function homeScreen(){
     </div>
     <div class="heroflex">
       <div class="heronum">
-        <span class="k">${primaryIsTotal ? "Total Balance" : "Spendable, rest of October"}</span>
-        <span class="big num" id="heronum" data-v="${pv}">${peso(pv)}</span>
+        <span class="k">${primaryIsTotal ? "Total Balance" : "Spendable, rest of " + mName}</span>
+        <span class="big num" id="heronum" data-v="${pv}">${pesoR(pv)}</span>
         <span class="sm">${primaryIsTotal
           ? "All cash, bank and e-wallet money, savings included."
           : "What is left to spend this month after bills, cards and savings."}</span>
         <div class="row" style="margin-top:6px">
           <span class="sm">${primaryIsTotal ? "Monthly Spendable" : "Total Balance"}</span>
-          <span class="mid num">${peso(sv)}</span>
+          <span class="mid num">${pesoR(sv)}</span>
         </div>
       </div>
-      ${donut(parts, primaryIsTotal ? peso(savingsTotal) : peso(c.total),
+      ${donut(parts, primaryIsTotal ? pesoR(savingsTotal) : pesoR(c.total),
       primaryIsTotal ? "In savings" : "Total")}
     </div>
     <div class="legend">${legend}</div>
     <div class="row"><span class="sm">Credit cards owed — not part of Total Balance</span>
-      <span class="mid num" style="color:var(--warn)">${peso(c.cardsOwed)}</span></div>
+      <span class="mid num" style="color:var(--warn)">${pesoR(c.cardsOwed)}</span></div>
   </section>
 
   <section class="c stack">
-    <div class="row"><span class="k">October allowance</span>
+    <div class="row"><span class="k">${mName} allowance</span>
       <button class="link" data-act="math">How this is worked out</button></div>
     <div class="row" style="align-items:flex-end">
-      <span><span class="big num">${peso(c.remaining)}</span><br><span class="sm">left of ${peso(c.allowance)}</span></span>
-      <span class="pill ${tone === "bad" ? "bad" : tone === "warn" ? "warn" : "good"}">
-        ${tone === "bad" ? "! over pool" : tone === "warn" ? "◔ most spent" : "✓ on track"}</span>
+      <span><span class="big num">${pesoR(c.remaining)}</span><br><span class="sm">left of ${pesoR(c.allowance)}</span></span>
+      <span class="pill ${c.status}">
+        ${c.status === "bad" ? "! over pool" : c.status === "warn" ? "◔ ahead of pace" : "✓ on track"}</span>
     </div>
-    ${meter(c.allowance > 0 ? c.spent/c.allowance : 0, tone)}
-    <div class="row"><span class="sm">Spent so far ${peso(c.spent)}</span>
+    ${meter(c.spentShare, tone)}
+    <div class="row"><span class="sm">Spent so far ${pesoR(c.spent)}</span>
       <span class="sm">${c.daysLeft} day${c.daysLeft === 1 ? "" : "s"} left</span></div>
     <hr class="hr">
     <div class="heroflex">
       <div class="heronum">
         <span class="k">Today you can spend</span>
-        <span class="mid num" style="font-size:25px">${peso(Math.max(0, c.todayAvail))}</span>
-        <span class="sm">Daily guide ${peso(c.guide)} · base ${peso(c.base)}
-          ${c.jar >= 0 ? "+ carried " + peso(c.jar) : "− behind " + peso(Math.abs(c.jar))}</span>
-        ${c.spentToday > 0 ? `<span class="sm">Spent today ${peso(c.spentToday)}</span>` : ""}
+        <span class="mid num" style="font-size:25px">${pesoR(Math.max(0, c.todayAvail))}</span>
+        <span class="sm">${c.jar >= 0 ? "Includes allowance you did not use on earlier days."
+          : "Lower than usual — earlier days went over their share."}</span>
+        ${c.spentToday > 0 ? `<span class="sm">Spent today ${pesoR(c.spentToday)}</span>` : ""}
       </div>
       ${jarSvg(jarFrac)}
     </div>
-    <p class="sm">Unspent allowance rolls to the next day inside October. It resets on
-      November 1 and never adds to the monthly pool.</p>
+    <p class="sm">Unspent allowance rolls to the next day inside ${mName}. It resets on
+      ${MONTHS[+addMonths(c.ym,1).slice(5,7)-1]} 1 and never adds to the monthly pool.</p>
   </section>
 
   <button class="tapcard stack8" data-act="go" data-screen="activity" data-filter="all">
-    <div class="row"><span class="k">October in and out</span><span class="link">See details</span></div>
+    <div class="row"><span class="k">${mName} in and out</span><span class="link">See details</span></div>
     ${ioBars(c.income, c.spent)}
     <div class="row"><span class="sm">Net this month</span>
-      <span class="mid num">${signed(c.income - c.spent)}</span></div>
+      <span class="mid num">${signedR(c.income - c.spent)}</span></div>
     <p class="sm">Transfers between your own accounts are not counted here.</p>
   </button>
 
@@ -703,10 +738,10 @@ function homeScreen(){
     <div class="row"><span class="k">Cards owed</span><span class="sm">Set aside from spendable</span></div>
     ${S.cards.map(k => `<div class="stack8">
       <div class="item" style="padding-left:0">
-        <span class="ic">▭</span>
+        <span class="ic">${icon("card",18)}</span>
         <span class="itxt"><span class="it1">${esc(k.name)}</span>
           <span class="it2">Due ${dateLabel(k.due)} · Pay from ${esc(acct(k.payFrom).name)}</span></span>
-        <span class="iamt num">${peso(c.bal.cards[k.id])}</span></div>
+        <span class="iamt num">${pesoR(c.bal.cards[k.id])}</span></div>
       <div class="grid2">
         <button class="btn alt sm" style="width:100%" data-act="payfrom" data-id="${k.id}">Change Pay from</button>
         <button class="btn alt sm" style="width:100%" data-act="paycard" data-id="${k.id}"
@@ -726,9 +761,7 @@ function homeScreen(){
     <div class="row"><span class="k">Recent activity</span>
       <button class="link" data-act="go" data-screen="activity" data-filter="all">See all</button></div>
     ${recent}
-  </section>
-
-  <button class="btn" data-act="log">+ Log a transaction</button>`;
+  </section>`;
 }
 
 /* ---- shared transaction row ---------------------------------------------- */
@@ -789,7 +822,7 @@ function activityScreen(){
     if(!buf.length) return;
     const net = dayTotal(buf);
     groups += `<div class="daybar"><span class="dd">${dateLabel(day)}</span>
-      <span class="dt num">${net === 0 ? "no change" : signed(net)}</span></div>
+      <span class="dt num">${Math.round(net) === 0 ? "no change" : signedR(net)}</span></div>
       <div class="c tight">${buf.map(txnRow).join("")}</div>`;
     buf = [];
   };
@@ -799,7 +832,7 @@ function activityScreen(){
   if(undated.length){
     const net = dayTotal(undated);
     groups += `<div class="daybar" id="undated"><span class="dd">Date not specified</span>
-      <span class="dt num">${net === 0 ? "no change" : signed(net)}</span></div>
+      <span class="dt num">${Math.round(net) === 0 ? "no change" : signedR(net)}</span></div>
       <div class="c tight stack8"><p class="sm">Known only by month. Counted in ${monthLabel(ym)}
       totals and in the monthly allowance, with no day attributed.</p>
       ${undated.map(txnRow).join("")}</div>`;
@@ -815,33 +848,49 @@ function activityScreen(){
   return `
   <section class="c stack8">
     <div class="mnav">
-      <button data-act="month" data-d="-1" aria-label="Previous month">‹</button>
+      <button data-act="month" data-d="-1" aria-label="Previous month">${icon("left",18)}</button>
       <h2>${monthLabel(ym)}</h2>
-      <button data-act="month" data-d="1" aria-label="Next month">›</button>
+      <button data-act="month" data-d="1" aria-label="Next month">${icon("right",18)}</button>
     </div>
     ${ioBars(mIn, mOut)}
     <div class="row"><span class="sm">${monthTxns(ym).length} entries</span>
-      <span class="sm num">Net ${signed(mIn - mOut)}</span></div>
+      <span class="sm num">Net ${signedR(mIn - mOut)}</span></div>
+    ${undated.length ? `<div><button class="chip nodaychip" data-act="jumpundated">${undated.length} with no day
+      ${icon("down",14)}</button></div>` : ""}
   </section>
   <div class="chips" role="group" aria-label="Filter activity">
     ${FILTERS.map(([k,l]) => `<button class="chip" data-act="filter" data-v="${k}"
       aria-pressed="${actFilter === k}">${l}</button>`).join("")}
   </div>
-  ${groups}
-  <button class="btn" data-act="log">+ Log a transaction</button>`;
+  ${groups}`;
 }
 
 /* ---- SAVINGS ------------------------------------------------------------- */
 function savingsScreen(){
   const c = calc();
   const general = S.savings.mode === "general";
+  const mName = MONTHS[+c.ym.slice(5,7)-1];
   const savers = S.accounts.filter(a => a.save);
+  // Spending paid straight from a savings-counted account lowers progress; say so
+  // instead of letting the dip go unexplained [USER Oct 25, UX #5].
+  const spentFrom = id => monthTxns(c.ym).filter(t => t.kind === "expense" && t.pay !== "card" && t.acct === id);
   const perAcct = savers.map(a => {
     const d = c.bal.acc[a.id] - c.prev.acc[a.id];
+    const out = spentFrom(a.id).reduce((s,t) => s + t.amount, 0);
     return `<div class="item" style="padding-left:0"><span class="sw" style="background:var(--s${a.slot});width:11px;height:11px"></span>
       <span class="itxt"><span class="it1">${esc(a.name)}</span>
-        <span class="it2">${peso(c.prev.acc[a.id])} → ${peso(c.bal.acc[a.id])}</span></span>
-      <span class="iamt num ${d > 0 ? "in" : ""}">${d === 0 ? "no change" : signed(d)}</span></div>`;
+        <span class="it2">${pesoR(c.prev.acc[a.id])} → ${pesoR(c.bal.acc[a.id])}${out ? " · −" + pesoR(out) + " spent" : ""}</span></span>
+      <span class="iamt num ${d > 0 ? "in" : ""}">${Math.round(d) === 0 ? "no change" : signedR(d)}</span></div>`;
+  }).join("");
+  const spentNotes = savers.map(a => {
+    const list = spentFrom(a.id);
+    if(!list.length) return "";
+    const out = list.reduce((s,t) => s + t.amount, 0);
+    const names = [...new Set(list.map(t => t.merch || t.type || t.cat))].join(", ");
+    return `<div class="note"><b>− ${pesoR(out)} spent from ${esc(a.name)} this month</b>
+      <span>${list.length} expense${list.length === 1 ? "" : "s"} (${esc(names)}) paid from ${esc(a.name)}.
+      It still counts toward savings, so that spending lowers ${mName}'s progress. Change it under
+      Which accounts count.</span></div>`;
   }).join("");
 
   const goalSaved = S.goalLog.reduce((s,g) => s + g.amount, 0);
@@ -860,9 +909,9 @@ function savingsScreen(){
   <section class="c hero">
     <div class="heroflex">
       <div class="heronum">
-        <span class="k">Saved in October</span>
-        <span class="big num">${peso(c.savedThisMonth)}</span>
-        <span class="sm">of a ${peso(c.savingsTarget)} recommendation</span>
+        <span class="k">Saved in ${mName}</span>
+        <span class="big num">${pesoR(c.savedThisMonth)}</span>
+        <span class="sm">of a ${pesoR(c.savingsTarget)} recommendation</span>
       </div>
       ${donut([{slot:3, v:Math.max(0,c.savedThisMonth)},
                {slot:0, v:Math.max(0, c.savingsTarget - c.savedThisMonth)}],
@@ -871,28 +920,29 @@ function savingsScreen(){
     ${meter(c.savingsTarget > 0 ? c.savedThisMonth/c.savingsTarget : 0)}
     <p class="sm">Progress is the net increase across your savings accounts this calendar month —
       actual money moved, not intentions. ${c.savingsLeft > 0
-        ? "Still set aside in Spendable: " + peso(c.savingsLeft) + "."
+        ? "Still set aside in Spendable: " + pesoR(c.savingsLeft) + "."
         : "This month's recommendation is met, so nothing more is held back from Spendable."}</p>
     <hr class="hr">
     <div class="stack8">${perAcct}</div>
+    ${spentNotes}
     <div class="grid2">
       <button class="btn alt sm" style="width:100%" data-act="starget">Adjust recommendation</button>
       <button class="btn alt sm" style="width:100%" data-act="saccts">Which accounts count</button>
     </div>
     <div class="note"><b>How the recommendation is made</b>
-      <span>15% of the ${peso(c.income)} received this month, capped by what is actually free once
+      <span>${Math.round(SAVE_RATE*100)}% of the ${peso(c.income)} received this month, capped by what is actually free once
       bills and card bills are covered (${peso(c.freeAfterDues)}), rounded to the nearest 100 =
       ${peso(c.savingsTarget)}. Illustrative only — sample data, and expected income is never counted.</span></div>
     <div class="note"><b>Carried allowance is not savings yet</b>
-      <span>Your jar holds ${peso(Math.max(0,c.jar))} of unspent daily allowance. It counts as savings only
+      <span>Your jar holds ${pesoR(Math.max(0,c.jar))} of unspent daily allowance. It counts as savings only
       once it shows up as a net increase in a savings account.</span></div>
   </section>` : `
   <section class="c hero">
     <div class="heroflex">
       <div class="heronum">
         <span class="k">${esc(g.name)}</span>
-        <span class="big num">${peso(goalSaved)}</span>
-        <span class="sm">of ${peso(g.target)} · ${peso(Math.max(0, g.target - goalSaved))} to go</span>
+        <span class="big num">${pesoR(goalSaved)}</span>
+        <span class="sm">of ${pesoR(g.target)} · ${pesoR(Math.max(0, g.target - goalSaved))} to go</span>
       </div>
       ${donut([{slot:5, v:goalSaved},{slot:0, v:Math.max(0, g.target - goalSaved)}],
         Math.round(goalSaved/g.target*100) + "%", "of goal")}
@@ -927,7 +977,7 @@ function moreScreen(){
     <div class="row"><span class="k">Bills and obligations</span><button class="link" data-act="addbill">Add</button></div>
     ${S.payables.slice().sort((a,b) => a.due < b.due ? -1 : 1).map(p => `
       <button class="item" data-act="payable" data-id="${p.id}">
-        <span class="ic">${p.paid ? "✓" : p.amount == null ? "?" : "◷"}</span>
+        <span class="ic">${p.paid ? "✓" : p.amount == null ? "?" : icon("clock",18)}</span>
         <span class="itxt"><span class="it1">${esc(p.name)}</span>
           <span class="it2">${p.paid ? "Paid" : "Due " + dateLabel(p.due)}</span></span>
         <span class="iamt num">${p.amount == null ? '<span class="pill warn">?</span>' : peso(p.amount)}</span>
@@ -984,7 +1034,7 @@ function paint(){
   host.innerHTML = `<div class="scrim" data-act="close"></div>
     <section class="sheet" role="dialog" aria-modal="true" aria-label="${esc(top.title)}">
       <div class="shead"><h2>${esc(top.title)}</h2>
-        <button class="sx" data-act="close" aria-label="Close">✕</button></div>
+        <button class="sx" data-act="close" aria-label="Close">${icon("close",18)}</button></div>
       <div class="sbody"><div class="sin">${top.body()}</div></div></section>`;
   host.querySelector(".sbody").scrollTop = keep;
   document.body.style.overflow = "hidden";
@@ -1045,6 +1095,16 @@ function mathSheet(){
       ${lg("Today you can spend", peso(Math.max(0, c.todayAvail)), "", "tot")}
       ${lg("Daily guide — spendable ÷ " + c.daysLeft + " day" + (c.daysLeft === 1 ? "" : "s") + " left", peso(c.guide), "")}
     </div>
+    <div class="k">Pace — is spending keeping up with the calendar?</div>
+    <div class="ledger">
+      ${lg("Share of " + MONTHS[+c.ym.slice(5,7)-1] + " gone — day " + c.day + " of " + c.dim, pct(c.pace), "")}
+      ${lg("Allowed ahead of pace", "+" + Math.round(PACE_SLACK*100) + " points", "+")}
+      ${lg("Amber above", pct(c.pace + PACE_SLACK), "", "tot")}
+      ${lg("Share of the pool spent — " + peso(c.spent) + " of " + peso(c.allowance), pct(c.spentShare), "")}
+      ${lg("Status", c.status === "bad" ? "! over pool" : c.status === "warn" ? "◔ ahead of pace" : "✓ on track", "", "tot")}
+    </div>
+    <p class="sm">On track while the share spent stays within ${Math.round(PACE_SLACK*100)} points of the share of
+      the month gone. Spendable below zero is over the pool.</p>
     <div class="note"><b>Why a card purchase is only counted once</b>
       <span>It is an expense the moment you buy, and it raises what the card owes. Your bank
       balance does not move, so the amount is held back here instead. Paying the card later
@@ -1074,7 +1134,7 @@ function logSheet(){
     </div>`});
 }
 function startExpense(){
-  draft = {kind:"expense", amount:"", month:S.today.slice(0,7), date:null, time:"",
+  draft = {kind:"expense", amount:"", month:S.today.slice(0,7), date:undefined, time:"",
     cat:null, type:null, merch:null, pay:"cash", acct:"cash", card:"ubv",
     note:"", scan:{}, confirmed:true};
   openSheet({title:"Expense", key:"expway", body:() => `
@@ -1138,7 +1198,7 @@ function effectStrip(){
     } else rows.push([acct(draft.acct).name, "−" + peso(amt)]);
     rows.push([MONTHS[+draft.month.slice(5,7)-1] + " expenses", "+" + peso(amt)]);
     rows.push(["Spendable, rest of month", peso(c.remaining) + " → " + peso(c.remaining - amt)]);
-    if(!draft.date) rows.push(["Daily carryover", "untouched — no day attributed"]);
+    if(draft.date === null) rows.push(["Daily carryover", "untouched — no day attributed"]);
   } else if(draft.kind === "income"){
     rows.push([acct(draft.acct).name, "+" + peso(amt)]);
     rows.push([MONTHS[+draft.month.slice(5,7)-1] + " income", "+" + peso(amt)]);
@@ -1160,11 +1220,27 @@ function effectStrip(){
   return `<div class="ledger">${rows.map(r =>
     `<div class="lg"><span>${esc(r[0])}</span><b>${esc(r[1])}</b></div>`).join("")}</div>`;
 }
+/* Day: Today and Not known side by side, neither assumed; Save waits for a choice. */
+function dayField(d, scanned){
+  const today = d.date === S.today, other = !!d.date && !today;
+  return `<div class="f dayf"><span class="flab">Day <span class="req">pick one</span>
+      ${scanned ? '<span class="scan">from scan</span>' : ""}</span>
+    <div class="daychips" role="group" aria-label="Day">
+      <button class="chip" data-act="daytoday" aria-pressed="${today}">Today</button>
+      <button class="chip" data-act="dayunknown" aria-pressed="${d.date === null}">Not known</button>
+      <button class="chip" data-act="pickday" aria-pressed="${other}">${other
+        ? MONTHS[+d.date.slice(5,7)-1].slice(0,3) + " " + dayOf(d.date) + " · " + weekdayOf(d.date).slice(0,3)
+        : "Another day"}${icon("right",14)}</button>
+    </div>
+    ${d.date === undefined ? '<span class="sm">The day is never assumed — tap Today, Not known, or another day.</span>' : ""}</div>`;
+}
+const canSave = d => +d.amount > 0 && d.confirmed !== false && d.date !== undefined
+  && (d.kind !== "transfer" || d.from !== d.to);
 function pickerRow(label, value, act, req, scanned){
   return `<label class="f"><span class="flab">${esc(label)}${req ? ' <span class="req">required</span>' : ""}
     ${scanned ? '<span class="scan">from scan</span>' : ""}</span>
     <button class="picker ${value ? "set" : ""}" data-act="${act}">
-      <span class="pv ${value ? "" : "ph"}">${esc(value || "Choose")}</span><span aria-hidden="true">›</span></button></label>`;
+      <span class="pv ${value ? "" : "ph"}">${esc(value || "Choose")}</span>${icon("right",16)}</button></label>`;
 }
 function expenseForm(){
   openSheet({title:"Review expense", key:"form", body:() => {
@@ -1179,11 +1255,9 @@ function expenseForm(){
       <span class="amtbox"><span>₱</span><input id="amt" class="num" type="text" inputmode="decimal"
         value="${esc(d.amount)}" placeholder="0" data-f="amount" autocomplete="off"></span></label>
 
-    <div class="grid2">
-      ${pickerRow("Month and year", monthLabel(d.month), "pickmonth", true)}
-      ${pickerRow("Day", d.date ? dayOf(d.date) + " (" + weekdayOf(d.date) + ")" : "Not known", "pickday", false, d.scan.date)}
-    </div>
-    ${d.date ? "" : `<div class="note"><b>No day attributed</b>
+    ${pickerRow("Month and year", monthLabel(d.month), "pickmonth", true)}
+    ${dayField(d, d.scan.date)}
+    ${d.date !== null ? "" : `<div class="note"><b>No day attributed</b>
       <span>This will count in ${monthLabel(d.month)} totals and in the monthly allowance, and will sit
       in the “Date not specified” group. No day is invented and past carryover is left alone.</span></div>`}
 
@@ -1193,7 +1267,7 @@ function expenseForm(){
     ${pickerRow("Paid with", payLabel + " · " + where, "pickpay")}
     ${d.pay === "card" ? `<label class="f"><span class="flab">Pay from</span>
       <button class="picker set" data-act="pickpayfrom"><span class="pv">${esc(acct(card(d.card).payFrom).name)}</span>
-      <span aria-hidden="true">›</span></button>
+      ${icon("right",16)}</button>
       <span class="sm">Where you plan to pay this card from. Money is held back for it —
       nothing is transferred.</span></label>` : ""}
     <div class="grid2">
@@ -1208,7 +1282,7 @@ function expenseForm(){
     ${hasScan ? `<button class="opt" data-act="confirmscan" aria-checked="${d.confirmed}">
       <span class="mk">${d.confirmed ? "✓" : ""}</span>
       <span>I checked the scanned fields</span></button>` : ""}
-    <button class="btn" data-act="saveexp" ${(+d.amount > 0 && d.confirmed) ? "" : "disabled"}>Save expense</button>
+    <button class="btn" data-act="saveexp" ${canSave(d) ? "" : "disabled"}>Save expense</button>
     <button class="btn alt" data-act="close">Cancel</button>`;
   }});
 }
@@ -1223,15 +1297,13 @@ function startIncome(){
     <label class="f"><span class="flab">Source</span>
       <input class="inp" type="text" placeholder="Salary, rent received…" value="${esc(draft.src)}" data-f="src"></label>
     ${pickerRow("Received in", acct(draft.acct).name, "pickacct")}
-    <div class="grid2">
-      ${pickerRow("Month and year", monthLabel(draft.month), "pickmonth", true)}
-      ${pickerRow("Day", draft.date ? dayOf(draft.date) + " (" + weekdayOf(draft.date) + ")" : "Not known", "pickday")}
-    </div>
+    ${pickerRow("Month and year", monthLabel(draft.month), "pickmonth", true)}
+    ${dayField(draft)}
     <div class="k">What this will change</div>
     ${fx()}
     <div class="note"><b>Only money actually received</b>
       <span>Income you are expecting is never counted in the figures.</span></div>
-    <button class="btn" data-act="saveinc" ${+draft.amount > 0 ? "" : "disabled"}>Save income</button>
+    <button class="btn" data-act="saveinc" ${canSave(draft) ? "" : "disabled"}>Save income</button>
     <button class="btn alt" data-act="close">Cancel</button>`});
 }
 function startTransfer(preset){
@@ -1250,17 +1322,14 @@ function startTransfer(preset){
     ${pickerRow("To", acct(draft.to).name, "pickto")}
     <label class="f"><span class="flab">Note</span>
       <input class="inp" type="text" value="${esc(draft.note)}" data-f="note"></label>
-    <div class="grid2">
-      ${pickerRow("Month and year", monthLabel(draft.month), "pickmonth", true)}
-      ${pickerRow("Day", draft.date ? dayOf(draft.date) + " (" + weekdayOf(draft.date) + ")" : "Not known", "pickday")}
-    </div>
+    ${pickerRow("Month and year", monthLabel(draft.month), "pickmonth", true)}
+    ${dayField(draft)}
     <div class="k">What this will change</div>
     ${fx()}
     <div class="note"><b>Not income, not an expense</b>
       <span>A withdrawal moves money from your bank into Cash on Hand. Spending that cash later
       is the expense.</span></div>
-    <button class="btn" data-act="savemove"
-      ${(+draft.amount > 0 && draft.from !== draft.to) ? "" : "disabled"}>Save transfer</button>
+    <button class="btn" data-act="savemove" ${canSave(draft) ? "" : "disabled"}>Save transfer</button>
     <button class="btn alt" data-act="close">Cancel</button>`});
 }
 function startCardPay(cardId){
@@ -1276,14 +1345,12 @@ function startCardPay(cardId){
       <span class="amtbox"><span>₱</span><input class="num" type="text" inputmode="decimal"
         value="${esc(draft.amount)}" placeholder="0" data-f="amount"></span></label>
     ${pickerRow("Pay from", acct(draft.acct).name, "pickacct")}
-    <div class="grid2">
-      ${pickerRow("Month and year", monthLabel(draft.month), "pickmonth", true)}
-      ${pickerRow("Day", draft.date ? dayOf(draft.date) + " (" + weekdayOf(draft.date) + ")" : "Not known", "pickday")}
-    </div>
+    ${pickerRow("Month and year", monthLabel(draft.month), "pickmonth", true)}
+    ${dayField(draft)}
     ${fundingWarning() || ""}
     <div class="k">What this will change</div>
     ${fx()}
-    <button class="btn" data-act="savepay" ${+draft.amount > 0 ? "" : "disabled"}>Save payment</button>
+    <button class="btn" data-act="savepay" ${canSave(draft) ? "" : "disabled"}>Save payment</button>
     <button class="btn alt" data-act="close">Cancel</button>`;
   }});
 }
@@ -1295,7 +1362,7 @@ function pickMonth(){
   for(let i = -6; i <= 1; i++) opts.push({v:addMonths(base, i), label:monthLabel(addMonths(base, i))});
   listSheet("Month and year", opts.reverse(), draft.month, v => {
     draft.month = v;
-    if(draft.date && draft.date.slice(0,7) !== v) draft.date = null;
+    if(draft.date && draft.date.slice(0,7) !== v) draft.date = undefined;   // ask again, never assume
     closeSheet(); refresh();
   });
 }
@@ -1308,7 +1375,7 @@ function pickDay(){
     if(iso === S.today) continue;
     opts.push({v:iso, label:d + " — " + weekdayOf(iso), sub:iso > S.today ? "later this month" : ""});
   }
-  listSheet("Day", opts, draft.date || "", v => {
+  listSheet("Day", opts, draft.date === undefined ? "-" : draft.date || "", v => {
     draft.date = v || null;
     closeSheet(); refresh();
   }, `<p class="sm">The day is never assumed. Leave it unknown and the entry still counts in
@@ -1370,29 +1437,29 @@ function saveExpense(){
   commit(t);
   const c = calc();
   closeSheet(stack.length); render();
-  if(d.pay === "card") toast(card(d.card).name + " now owes " + peso(c.bal.cards[d.card]) + ". Bank balance unchanged.");
-  else if(!d.date) toast("Saved to " + monthLabel(d.month) + " with no day. Daily guide is now " + peso(c.guide) + ".");
-  else if(c.todayAvail >= 0 && d.date === S.today) toast("Saved. Today you can still spend " + peso(Math.max(0,c.todayAvail)) + ".");
-  else toast("Saved. Spendable is now " + peso(c.remaining) + ".");
+  if(d.pay === "card") toast(card(d.card).name + " now owes " + pesoR(c.bal.cards[d.card]) + ". Bank balance unchanged.");
+  else if(!d.date) toast("Saved to " + monthLabel(d.month) + " with no day. Daily guide is now " + pesoR(c.guide) + ".");
+  else if(c.todayAvail >= 0 && d.date === S.today) toast("Saved. Today you can still spend " + pesoR(Math.max(0,c.todayAvail)) + ".");
+  else toast("Saved. Spendable is now " + pesoR(c.remaining) + ".");
 }
 function saveIncome(){
   const d = draft;
   commit({kind:"income", amount:r2(+d.amount), date:d.date, month:d.month, src:d.src || "Income", acct:d.acct});
-  closeSheet(stack.length); render(); toast("Income recorded. Spendable is now " + peso(calc().remaining) + ".");
+  closeSheet(stack.length); render(); toast("Income recorded. Spendable is now " + pesoR(calc().remaining) + ".");
 }
 function saveMove(){
   const d = draft;
   commit({kind:"transfer", amount:r2(+d.amount), date:d.date, month:d.month, from:d.from, to:d.to, note:d.note});
   const c = calc();
   closeSheet(stack.length); render();
-  toast(acct(d.to).name + " is now " + peso(c.bal.acc[d.to]) + ". Total Balance unchanged — no expense.");
+  toast(acct(d.to).name + " is now " + pesoR(c.bal.acc[d.to]) + ". Total Balance unchanged — no expense.");
 }
 function saveCardPay(){
   const d = draft;
   commit({kind:"cardpay", amount:r2(+d.amount), date:d.date, month:d.month, card:d.card, acct:d.acct});
   const c = calc();
   closeSheet(stack.length); render();
-  toast(card(d.card).name + " owes " + peso(c.bal.cards[d.card]) + ". No new expense added.");
+  toast(card(d.card).name + " owes " + pesoR(c.bal.cards[d.card]) + ". No new expense added.");
 }
 
 /* ---- open / edit an entry ------------------------------------------------ */
@@ -1413,10 +1480,8 @@ function txnSheet(id){
     <label class="f"><span class="flab">Amount</span>
       <span class="amtbox"><span>₱</span><input class="num" type="text" inputmode="decimal"
         value="${esc(d.amount)}" data-f="amount"></span></label>
-    <div class="grid2">
-      ${pickerRow("Month and year", monthLabel(d.month), "pickmonth", true)}
-      ${pickerRow("Day", d.date ? dayOf(d.date) + " (" + weekdayOf(d.date) + ")" : "Not known", "pickday")}
-    </div>
+    ${pickerRow("Month and year", monthLabel(d.month), "pickmonth", true)}
+    ${dayField(d)}
     ${t.kind === "expense" ? `
       ${pickerRow("Category", d.cat, "pickcat")}
       ${pickerRow("Type", d.type, "picktype")}
@@ -1425,7 +1490,7 @@ function txnSheet(id){
         : (d.pay === "cash" ? "Cash · " : "Bank / e-wallet · ") + acct(d.acct).name), "pickpay")}` : ""}
     <label class="f"><span class="flab">Notes</span>
       <input class="inp" type="text" value="${esc(d.note || "")}" data-f="note"></label>
-    <button class="btn" data-act="saveedit">Save changes</button>
+    <button class="btn" data-act="saveedit" ${d.date === undefined ? "disabled" : ""}>Save changes</button>
     <button class="btn danger" data-act="deltxn" data-id="${id}">Delete this entry</button>
     <button class="btn alt" data-act="close">Close</button>`;
   }});
@@ -1506,7 +1571,7 @@ function acctSheet(id){
 function targetSheet(){
   const c = calc();
   openSheet({title:"Monthly savings recommendation", key:"starget", body:() => `
-    <p class="sm">The recommendation is 15% of income received this month (${peso(c.income)}),
+    <p class="sm">The recommendation is ${Math.round(SAVE_RATE*100)}% of income received this month (${peso(c.income)}),
       held to what is free after bills and card bills (${peso(c.freeAfterDues)}) and rounded to the
       nearest 100. Set your own figure if you prefer.</p>
     <label class="f"><span class="flab">Amount for ${monthLabel(c.ym)}</span>
@@ -1830,6 +1895,13 @@ document.addEventListener("click", e => {
     case "pick": if(top && top.onPick) top.onPick(v); break;
     case "pickmonth": pickMonth(); break;
     case "pickday": pickDay(); break;
+    case "daytoday": draft.date = S.today; draft.month = S.today.slice(0,7); if(draft.scan) delete draft.scan.date; refresh(); break;
+    case "dayunknown": draft.date = null; if(draft.scan) delete draft.scan.date; refresh(); break;
+    case "jumpundated": {
+      const u = document.getElementById("undated");
+      if(u) window.scrollTo({top: u.getBoundingClientRect().top + window.scrollY - 60,
+        behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+      break; }
     case "pickcat": pickCat(); break;
     case "picktype": pickType(); break;
     case "pickmerch": pickMerch(); break;
@@ -1922,7 +1994,7 @@ document.addEventListener("click", e => {
       S.savings.target = raw === "" ? null : r2(+raw); save(); closeSheet(stack.length); render();
       toast("Savings recommendation set to " + peso(calc().savingsTarget) + "."); break; }
     case "cleartgt": S.savings.target = null; save(); closeSheet(stack.length); render();
-      toast("Back to 15% of income received."); break;
+      toast("Back to " + Math.round(SAVE_RATE*100) + "% of income received."); break;
     case "addgoal": draft = {gacct:"bdos"}; addGoalSheet(); break;
     case "savegoal": {
       const amt = r2(+(document.getElementById("ga").value || 0));
@@ -1958,16 +2030,21 @@ document.addEventListener("input", e => {
   const strip = host.querySelector("#fx");
   if(strip) strip.innerHTML = effectStrip() || '<p class="sm">Enter an amount to see the effect.</p>';
   const btn = host.querySelector("[data-act^='save']");
-  if(btn) btn.disabled = !(+draft.amount > 0 && draft.confirmed !== false
-    && (draft.kind !== "transfer" || draft.from !== draft.to));
+  if(btn && draft.kind && !draft.editing) btn.disabled = !canSave(draft);
 });
-document.addEventListener("change", e => { if(e.target.dataset.f && draft) refresh(); });
+/* Repaint on blur so the funding warning catches up — but not while a button is being
+   pressed: repainting would swap the button out from under the tap, and its own action
+   repaints anyway. */
+let pressing = false;
+document.addEventListener("pointerdown", e => { pressing = !!e.target.closest("[data-act]"); }, true);
+document.addEventListener("click", () => { pressing = false; }, true);
+document.addEventListener("pointercancel", () => { pressing = false; }, true);
+document.addEventListener("change", e => { if(e.target.dataset.f && draft && !pressing) refresh(); });
 document.addEventListener("keydown", e => { if(e.key === "Escape" && stack.length) closeSheet(); });
 
 /* ---- boot ---------------------------------------------------------------- */
 if(S.theme) document.documentElement.dataset.theme = S.theme;
+document.querySelectorAll("[data-ico]").forEach(el => { el.innerHTML = icon(el.dataset.ico, +el.dataset.size || 22); });
 render();
-if(!S.seen){ S.seen = true; save();
-  setTimeout(() => toast("Sample data only. The setup guide is under More."), 700); }
 </script>
 </body></html>
