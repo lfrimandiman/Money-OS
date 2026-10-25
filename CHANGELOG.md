@@ -2,6 +2,22 @@
 
 One entry per version, newest first.
 
+## v5 — 2026-10-25
+- **Start with my own money** (More, in sample mode): one setup sheet for accounts (name, kind,
+  balance right now, protected / counts as savings), credit cards (owed now, due, pay from),
+  bills (amount blank = unknown) and an optional goal. Starting replaces the sample on this
+  phone, drops the demo date and follows the phone's calendar. Balances entered are the starting
+  point; only new money is logged from then on. Nothing real is in the code or the repo.
+- **ChatGPT + Claude link**: the app can keep a Google Sheet that Jordan owns up to date (create
+  one from the app, or paste a sheet link). It writes through his own claude.ai Google Drive and
+  Google Sheets connectors, only after a change or "Update now", never on load. ChatGPT reads the
+  sheet with its Google Drive connector, Claude with Google Sheets. Errors say what to fix.
+- Real mode: no Sample Data pill or demo clock, "Illustrative only" notes hidden, "Erase my data
+  on this phone" (tap twice) instead of reset. Acceptance scenarios run on a sample copy and
+  leave real data untouched. Home and Log handle having no cards.
+- Colors: cream, black and red (Jordan, Oct 25), light and dark.
+- All nine acceptance scenarios pass in sample mode and in real mode.
+
 ## v4 — 2026-10-25
 - More → **Use with ChatGPT or Claude**: "Copy for ChatGPT / Claude" builds a plain-text
   snapshot of this month (balances, Spendable, pool and pace, savings, cards, bills, every entry,
