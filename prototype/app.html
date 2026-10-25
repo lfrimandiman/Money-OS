@@ -6,17 +6,17 @@
    MONEY OS — interactive trial (fictional data)
    Layout: one phone-width column. Sticky top bar + fixed bottom tab bar;
    every picker, form and explainer opens as a stacked bottom sheet.
-   Palette: paper + pine ink shell (quiet) so the validated 6-hue account
-   palette is the only loud colour. Type: Plus Jakarta Sans for the app,
+   Palette: cream ground, black ink, red accent [USER Oct 25]; the validated
+   6-hue account palette stays for accounts only. Type: Plus Jakarta Sans for the app,
    IBM Plex Mono for ledger/reconciliation rows.
    =========================================================================== */
 :root{
   /* shell */
-  --ground:#EAEDE8; --card:#FBFBF8; --ink:#16241F; --soft:#5A675F; --line:#DADDD4;
-  --track:#E1E5DD; --accent:#0F6B4F; --ctaText:#FBFBF8;
+  --ground:#F3ECDF; --card:#FBF7EF; --ink:#161312; --soft:#6B625A; --line:#E2D8C6;
+  --track:#EAE1D0; --accent:#B1261C; --ctaText:#FBF7EF;
   /* status — always paired with a symbol + words, never colour alone */
-  --good:#0F6B4F; --warn:#8A5A0B; --bad:#A93A2A;
-  --goodBg:#E2EFE8; --warnBg:#F4EBD8; --badBg:#F5E3DF;
+  --good:#2F6A45; --warn:#8A5A0B; --bad:#A3221A;
+  --goodBg:#E3EBDD; --warnBg:#F3E6CC; --badBg:#F6DED8;
   /* account hues — dataviz categorical slots 1-6, validated light + dark */
   --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#008300;
   /* type */
@@ -24,22 +24,22 @@
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   /* motion — one easing, three durations */
   --ease:cubic-bezier(0.32,0.72,0,1); --t-quick:150ms; --t-std:450ms; --t-hero:550ms;
-  --shadow:0 10px 30px rgba(22,36,31,.14);
+  --shadow:0 10px 30px rgba(22,19,18,.14);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --ground:#0E1412; --card:#18211E; --ink:#E9EEE9; --soft:#9DAAA3; --line:#283330;
-  --track:#232D29; --accent:#4FBF93; --ctaText:#0E1412;
-  --good:#4FBF93; --warn:#D9A443; --bad:#E58C7C;
-  --goodBg:#153026; --warnBg:#31280F; --badBg:#331F1A;
+  --ground:#141110; --card:#1E1A18; --ink:#F3EBDD; --soft:#A89E92; --line:#332C28;
+  --track:#2A2421; --accent:#E8584B; --ctaText:#141110;
+  --good:#7CC08F; --warn:#D9A443; --bad:#EF7B6E;
+  --goodBg:#1D2A20; --warnBg:#33290F; --badBg:#3A1D19;
   --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300;
   --shadow:0 10px 30px rgba(0,0,0,.5);
   color-scheme:dark;
 }}
 :root[data-theme="dark"]{
-  --ground:#0E1412; --card:#18211E; --ink:#E9EEE9; --soft:#9DAAA3; --line:#283330;
-  --track:#232D29; --accent:#4FBF93; --ctaText:#0E1412;
-  --good:#4FBF93; --warn:#D9A443; --bad:#E58C7C;
-  --goodBg:#153026; --warnBg:#31280F; --badBg:#331F1A;
+  --ground:#141110; --card:#1E1A18; --ink:#F3EBDD; --soft:#A89E92; --line:#332C28;
+  --track:#2A2421; --accent:#E8584B; --ctaText:#141110;
+  --good:#7CC08F; --warn:#D9A443; --bad:#EF7B6E;
+  --goodBg:#1D2A20; --warnBg:#33290F; --badBg:#3A1D19;
   --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300;
   --shadow:0 10px 30px rgba(0,0,0,.5);
   color-scheme:dark;
@@ -60,7 +60,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .wrap{max-width:440px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--ground)}
 .topin{display:flex;align-items:center;gap:10px;min-height:52px;padding-block:6px}
-.brand{font-weight:700;font-size:16px;letter-spacing:-.01em;flex:none}
+.brand{font-weight:700;font-size:16px;letter-spacing:-.01em;flex:none;color:var(--accent)}
+.today{margin-left:auto;font-size:12.5px;font-weight:600;color:var(--soft);white-space:nowrap}
 .sample{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--warn);background:var(--warnBg);border-radius:999px;padding:4px 9px;white-space:nowrap}
 .clockbtn{margin-left:auto;display:flex;align-items:center;gap:6px;min-height:36px;padding:0 10px;border:1px solid var(--line);border-radius:12px;background:var(--card);font-size:12.5px;font-weight:600;white-space:nowrap}
 main{padding-block:4px 112px;display:grid;gap:14px}
@@ -93,7 +94,7 @@ main{padding-block:4px 112px;display:grid;gap:14px}
 .hero{display:grid;gap:14px}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--track);border-radius:14px;padding:4px}
 .seg button{min-height:40px;border:0;border-radius:11px;background:none;font-size:13px;font-weight:600;color:var(--soft);transition:background var(--t-quick) var(--ease)}
-.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(22,36,31,.12)}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(22,19,18,.12)}
 .heroflex{display:flex;align-items:center;gap:14px}
 .heronum{flex:1;min-width:0;display:grid;gap:2px}
 .big{font-size:32px;font-weight:700;line-height:1.08;letter-spacing:-.02em}
@@ -113,7 +114,7 @@ main{padding-block:4px 112px;display:grid;gap:14px}
 
 /* ---- meters -------------------------------------------------------------- */
 .meter{height:12px;border-radius:999px;background:var(--track);overflow:hidden}
-.meter i{display:block;height:100%;border-radius:999px;background:var(--accent);transition:width var(--t-std) var(--ease)}
+.meter i{display:block;height:100%;border-radius:999px;background:var(--ink);transition:width var(--t-std) var(--ease)}
 .meter.warn i{background:var(--warn)}
 .meter.bad i{background:var(--bad)}
 .bars{display:grid;gap:10px}
@@ -161,7 +162,7 @@ main{padding-block:4px 112px;display:grid;gap:14px}
 .fab{display:grid;place-items:center;justify-self:center;width:54px;height:54px;border-radius:18px;background:var(--ink);color:var(--ctaText);border:0;font-size:24px;font-weight:400;line-height:1;box-shadow:var(--shadow)}
 
 /* ---- sheets -------------------------------------------------------------- */
-.scrim{position:fixed;inset:0;z-index:40;background:rgba(22,36,31,.38);opacity:0;transition:opacity var(--t-std) var(--ease)}
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(20,17,16,.4);opacity:0;transition:opacity var(--t-std) var(--ease)}
 .scrim.in{opacity:1}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;max-height:min(92vh,860px);display:grid;grid-template-rows:auto 1fr;background:var(--card);border-radius:26px 26px 0 0;box-shadow:var(--shadow);transform:translateY(100%);transition:transform var(--t-std) var(--ease)}
 .sheet.in{transform:none}
@@ -220,6 +221,9 @@ textarea.inp{min-height:76px;padding:12px 14px;resize:vertical;line-height:1.4}
 .note.warn{background:var(--warnBg);color:var(--warn)}
 .note.bad{background:var(--badBg);color:var(--bad)}
 .note.good{background:var(--goodBg);color:var(--good)}
+.tone-good{color:var(--good)}
+.tone-warn{color:var(--warn)}
+.tone-bad{color:var(--bad)}
 .note b{font-weight:700}
 .steps{display:grid;gap:9px;counter-reset:s}
 .step{display:grid;grid-template-columns:26px 1fr;gap:11px;font-size:14px}
@@ -257,8 +261,9 @@ code{font-family:var(--mono);font-size:12.5px;background:var(--track);border-rad
 <div class="wrap topbar">
   <div class="topin">
     <span class="brand">Money OS</span>
-    <span class="sample">Sample data</span>
-    <button class="clockbtn" data-act="clock"><span data-ico="cal" data-size="16"></span> <span id="clocklbl" class="num">—</span></button>
+    <span class="sample" id="samplepill">Sample data</span>
+    <span class="today num" id="todaylbl" hidden></span>
+    <button class="clockbtn" id="clockbtn" data-act="clock"><span data-ico="cal" data-size="16"></span> <span id="clocklbl" class="num">—</span></button>
   </div>
 </div>
 <main class="wrap" id="screen"></main>
@@ -388,8 +393,20 @@ function load(){
   }catch(e){}
   return seed();
 }
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+let noSave = false;                    // set while scenarios run on a sample copy
+function save(){ if(noSave) return; try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
 function resetDemo(){ S = seed(); save(); }
+const isReal = () => S.mode === "real";
+/* Real mode follows the phone's calendar; the demo date is trial only [USER Oct 25]. */
+function localToday(){ const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
+/* Sensible default accounts for forms, by kind — no account id is assumed. */
+const firstId = list => (list[0] || {}).id;
+const defCash = () => firstId(S.accounts.filter(a => a.kind === "cash")) || defMain();
+const defMain = () => firstId(S.accounts.filter(a => !a.prot && a.kind !== "cash"))
+  || firstId(S.accounts.filter(a => !a.prot)) || firstId(S.accounts);
+const defSave = () => firstId(S.accounts.filter(a => a.save && a.kind === "savings"))
+  || firstId(S.accounts.filter(a => a.save)) || firstId(S.accounts);
+const defCard = () => firstId(S.cards);
 
 /* ===========================================================================
    2. HELPERS — dates, money, categories
@@ -623,7 +640,12 @@ function jarSvg(frac){
 let screenName = "home", actFilter = "all", actMonth = null;
 
 function render(){
+  if(isReal()) S.today = localToday();
   document.getElementById("clocklbl").textContent = dateLabel(S.today);
+  document.getElementById("todaylbl").textContent = dateLabel(S.today);
+  document.getElementById("samplepill").hidden = isReal();
+  document.getElementById("todaylbl").hidden = !isReal();
+  document.getElementById("clockbtn").hidden = isReal();
   document.querySelectorAll(".tab").forEach(b =>
     b.setAttribute("aria-current", b.dataset.screen === screenName ? "page" : "false"));
   const el = document.getElementById("screen");
@@ -748,7 +770,8 @@ function homeScreen(){
       <div class="grid2">
         <button class="btn alt sm" style="width:100%" data-act="payfrom" data-id="${k.id}">Change Pay from</button>
         <button class="btn alt sm" style="width:100%" data-act="paycard" data-id="${k.id}"
-          ${c.bal.cards[k.id] <= 0 ? "disabled" : ""}>Pay this card</button></div></div>`).join('<hr class="hr">')}
+          ${c.bal.cards[k.id] <= 0 ? "disabled" : ""}>Pay this card</button></div></div>`).join('<hr class="hr">')
+      || '<p class="sm">No credit cards added.</p>'}
   </section>
 
   <section class="c stack8">
@@ -935,7 +958,7 @@ function savingsScreen(){
     <div class="note"><b>How the recommendation is made</b>
       <span>${Math.round(SAVE_RATE*100)}% of the ${peso(c.income)} received this month, capped at income received
       minus this month's bills (${peso(c.savingsCap)}), rounded to the nearest 100 =
-      ${peso(c.savingsTarget)}. Illustrative only — sample data, and expected income is never counted.</span></div>
+      ${peso(c.savingsTarget)}. ${isReal() ? "" : "Illustrative only — sample data. "}Expected income is never counted.</span></div>
     <div class="note"><b>Carried allowance is not savings yet</b>
       <span>Your jar holds ${pesoR(Math.max(0,c.jar))} of unspent daily allowance. It counts as savings only
       once it shows up as a net increase in a savings account.</span></div>
@@ -966,15 +989,26 @@ function savingsScreen(){
 function moreScreen(){
   const c = calc();
   return `
+  ${isReal() ? `
+  <section class="c stack8">
+    <h2>Your money</h2>
+    <p class="sm">These are your own figures. They stay on this phone and, if you link one, in
+      your own Google Sheet. The app cannot move money.</p>
+    <button class="btn alt" data-act="scenarios">Acceptance scenarios (9) — run on sample data</button>
+    <button class="btn danger" data-act="erase">${eraseArmed ? "Tap again to erase everything" : "Erase my data on this phone"}</button>
+  </section>` : `
   <section class="c stack8">
     <h2>Trial controls</h2>
-    <p class="sm">Everything in this app is made up for the demo. No bank, Gmail, calendar or
-      sheet is connected, and nothing can move real money.</p>
+    <p class="sm">Everything here is made up for the demo. When you are ready, set it up with
+      your own accounts — the sample data and the demo date go away.</p>
+    <button class="btn" data-act="setup">Start with my own money</button>
     <button class="btn alt" data-act="guide">Setup guide</button>
     <button class="btn alt" data-act="scenarios">Acceptance scenarios (9)</button>
     <button class="btn alt" data-act="clock">Demo date — ${dateLabel(S.today)}</button>
     <button class="btn danger" data-act="reset">Reset demo data</button>
-  </section>
+  </section>`}
+
+  ${linkSection()}
 
   <section class="c stack8">
     <div class="row"><span class="k">Bills and obligations</span><button class="link" data-act="addbill">Add</button></div>
@@ -1009,10 +1043,17 @@ function moreScreen(){
   </section>
 
   <section class="c stack8">
-    <div class="k">Not in this trial</div>
-    <p class="sm">Live bank links, Gmail / calendar / Sheets, statement parsing, real receipt
-      reading, authentication and hosting, automatic transactions and export-ready reports.
-      Scan Receipt uses one sample receipt and simulated extraction.</p>
+    <div class="k">Paste into a chat</div>
+    <p class="sm">Copy this month as text and paste it into ChatGPT or Claude — handy in a chat
+      that cannot open your sheet.</p>
+    <button class="btn alt" data-act="aisnap">Copy for ChatGPT / Claude</button>
+  </section>
+
+  <section class="c stack8">
+    <div class="k">Not built yet</div>
+    <p class="sm">Live bank links, Gmail / calendar, statement parsing, real receipt reading,
+      automatic transactions and export-ready reports. Scan Receipt uses one sample receipt and
+      simulated extraction, so check what it fills in.</p>
   </section>`;
 }
 
@@ -1121,8 +1162,8 @@ function mathSheet(){
     ${c.billsUnknown.length ? `<div class="note warn"><b>? Missing information</b>
       <span>${esc(c.billsUnknown.map(p => p.name).join(", "))} — no amount yet, so not included.
       The figures above will change once it is known.</span></div>` : ""}
-    <div class="note warn"><b>Illustrative only</b>
-      <span>Every balance and transaction in this trial is made up.</span></div>
+    ${isReal() ? "" : `<div class="note warn"><b>Illustrative only</b>
+      <span>Every balance and transaction in this trial is made up.</span></div>`}
     <button class="btn alt" data-act="close">Close</button>`});
 }
 
@@ -1139,12 +1180,13 @@ function logSheet(){
     <p class="sm">Moving your own money — neither income nor expense.</p>
     <div class="grid2">
       <button class="btn alt sm" style="width:100%" data-act="new" data-kind="transfer">Withdraw / transfer</button>
-      <button class="btn alt sm" style="width:100%" data-act="new" data-kind="cardpay">Pay a card</button>
+      <button class="btn alt sm" style="width:100%" data-act="new" data-kind="cardpay" ${S.cards.length ? "" : "disabled"}>Pay a card</button>
     </div>`});
 }
 function startExpense(){
   draft = {kind:"expense", amount:"", month:S.today.slice(0,7), date:undefined, time:"",
-    cat:null, type:null, merch:null, pay:"cash", acct:"cash", card:"ubv",
+    cat:null, type:null, merch:null, pay:S.accounts.some(a => a.kind === "cash") ? "cash" : "bank",
+    acct:defCash(), card:defCard(),
     note:"", scan:{}, confirmed:true};
   openSheet({title:"Expense", key:"expway", body:() => `
     <p class="sm">Both routes end at the same review form. Nothing is saved until you confirm.</p>
@@ -1179,7 +1221,7 @@ function scanSheet(){
   setTimeout(() => {
     draft.amount = "1742.75"; draft.month = "2026-10"; draft.date = "2026-10-23"; draft.time = "18:12";
     draft.cat = "Groceries"; draft.type = "Supermarket"; draft.merch = "SM Supermarket";
-    draft.pay = "cash"; draft.acct = "cash"; draft.confirmed = false;
+    draft.pay = S.accounts.some(a => a.kind === "cash") ? "cash" : "bank"; draft.acct = defCash(); draft.confirmed = false;
     draft.scan = {amount:1, date:1, time:1, merch:1, cat:1, type:1};
     closeSheet(2); expenseForm();
     toast("6 fields filled from the receipt. Check them before saving.");
@@ -1298,7 +1340,7 @@ function expenseForm(){
 
 /* ---- income / transfer / card payment ------------------------------------ */
 function startIncome(){
-  draft = {kind:"income", amount:"", month:S.today.slice(0,7), date:S.today, src:"", acct:"bpi", confirmed:true};
+  draft = {kind:"income", amount:"", month:S.today.slice(0,7), date:S.today, src:"", acct:defMain(), confirmed:true};
   openSheet({title:"Income", key:"form", body:() => `
     <label class="f"><span class="flab">Amount <span class="req">required</span></span>
       <span class="amtbox"><span>₱</span><input class="num" type="text" inputmode="decimal"
@@ -1317,7 +1359,7 @@ function startIncome(){
 }
 function startTransfer(preset){
   draft = {kind:"transfer", amount:"", month:S.today.slice(0,7), date:S.today,
-    from:"bpi", to:"cash", note:"ATM withdrawal", confirmed:true};
+    from:defMain(), to:defCash(), note:"ATM withdrawal", confirmed:true};
   if(preset) Object.assign(draft, preset);
   openSheet({title:"Move your own money", key:"form", body:() => `
     <div class="grid2">
@@ -1343,7 +1385,8 @@ function startTransfer(preset){
 }
 function startCardPay(cardId){
   const b = balances(null);
-  const id = cardId || S.cards[0].id;
+  const id = cardId || defCard();
+  if(!id) return;
   draft = {kind:"cardpay", card:id, amount:String(b.cards[id] || ""), month:S.today.slice(0,7),
     date:S.today, acct:card(id).payFrom, confirmed:true};
   openSheet({title:"Pay a card", key:"form", body:() => {
@@ -1415,13 +1458,14 @@ function pickMerch(){
       <p class="sm" id="nomerch" hidden>No match. Tap Add to use it as a new merchant.</p></div>`);
 }
 function pickPay(){
-  const opts = [{v:"cash", label:"Cash", sub:"From Cash on Hand"},
+  const cashAcct = S.accounts.find(a => a.kind === "cash");
+  const opts = [...(cashAcct ? [{v:"cash", label:"Cash", sub:"From " + cashAcct.name}] : []),
     ...S.accounts.filter(a => a.kind !== "cash").map(a => ({v:"bank:"+a.id, label:a.name,
       sub:a.kind === "ewallet" ? "E-wallet" : a.kind === "savings" ? "Savings account" : "Bank account"})),
     ...S.cards.map(k => ({v:"card:"+k.id, label:k.name, sub:"Credit card — raises what you owe"}))];
   const cur = draft.pay === "cash" ? "cash" : draft.pay === "card" ? "card:"+draft.card : "bank:"+draft.acct;
   listSheet("Paid with", opts, cur, v => {
-    if(v === "cash"){ draft.pay = "cash"; draft.acct = "cash"; }
+    if(v === "cash"){ draft.pay = "cash"; draft.acct = defCash(); }
     else if(v.startsWith("bank:")){ draft.pay = "bank"; draft.acct = v.slice(5); }
     else { draft.pay = "card"; draft.card = v.slice(5); }
     closeSheet(); refresh();
@@ -1541,7 +1585,7 @@ function payBill(id){
   draft = {kind:"expense", amount:String(p.amount), month:S.today.slice(0,7), date:S.today, time:"",
     cat:"Household Bills", type:/internet/i.test(p.name) ? "Internet" : /electric/i.test(p.name) ? "Electricity"
       : /mobile/i.test(p.name) ? "Mobile" : /water/i.test(p.name) ? "Water" : "Misc",
-    merch:p.name.split("—").pop().trim(), pay:"bank", acct:"bpi", card:"ubv",
+    merch:p.name.split("—").pop().trim(), pay:"bank", acct:defMain(), card:defCard(),
     note:"Bill payment", scan:{}, confirmed:true, billId:id};
   if(/apartment|rent/i.test(p.name)){ draft.cat = "Home/Apartment"; draft.type = "Rent"; }
   closeSheet(stack.length);
@@ -1607,7 +1651,7 @@ function addGoalSheet(){
   openSheet({title:"Add to " + g.name, key:"addgoal", body:() => `
     <label class="f"><span class="flab">Amount</span>
       <span class="amtbox"><span>₱</span><input class="num" type="text" inputmode="decimal" id="ga" placeholder="0"></span></label>
-    ${pickerRow("Into which account", acct(draft && draft.gacct || "bdos").name, "pickgacct")}
+    ${pickerRow("Into which account", (acct(draft && draft.gacct || defSave()) || {name:"—"}).name, "pickgacct")}
     <div class="note"><b>This moves your own money</b>
       <span>It is recorded as a transfer, counts toward this goal, and also shows up in your
       monthly savings progress. Nothing moves automatically.</span></div>
@@ -1630,6 +1674,265 @@ function clockSheet(){
       Jump to ${monthLabel(addMonths(S.today.slice(0,7),1))} 1 — carryover resets</button>
     <button class="btn alt" data-act="jump" data-v="${TODAY_SEED}">Back to ${dateLabel(TODAY_SEED)}</button>
     <button class="btn alt" data-act="close">Done</button>`});
+}
+
+/* ---- snapshot for ChatGPT / Claude ---------------------------------------- */
+/* Plain text, built from calc() like every other figure, so it can be pasted into
+   any chat. Exact centavos throughout — it is a ledger, not a summary card. */
+function aiSnapshot(withEntries){
+  const c = calc(), mName = MONTHS[+c.ym.slice(5,7)-1];
+  const L = [];
+  const statusWord = c.status === "bad" ? "over pool" : c.status === "warn" ? "ahead of pace" : "on track";
+  L.push("# Money OS snapshot — " + dateLabel(S.today) + ", " + S.today.slice(0,4));
+  L.push(isReal() ? "Jordan's own figures, as logged in the app." : "SAMPLE DATA: every figure below is fictional trial data.", "");
+  L.push("## How to read this",
+    "- Currency PHP. Calendar months. Figures come from the app's one calculation:",
+    "  Spendable = unprotected accounts − unpaid bills this month − card set-aside − savings still to put away.",
+    "  Monthly pool = already spent this month + Spendable.",
+    "- Expected income is never counted. A bill marked ? has no amount yet and is left out (unknown is not zero).",
+    "- Own-account transfers are neither income nor expense. A card purchase is one expense; paying the card is not a second one.",
+    "- Protected accounts are in Total Balance but not in Spendable.", "");
+  L.push("## " + mName + " so far (day " + c.day + " of " + c.dim + ", " + c.daysLeft + " days left)",
+    "- Total Balance: " + peso(c.total),
+    "- Spendable, rest of month: " + peso(c.remaining),
+    "- Monthly pool: " + peso(c.allowance) + " · spent " + peso(c.spent) + " (" + pct(c.spentShare) + " of pool, " + pct(c.pace) + " of month gone) · status: " + statusWord,
+    "- Today you can spend: " + peso(Math.max(0, c.todayAvail)) + " · daily guide " + peso(c.guide),
+    "- Income received this month: " + peso(c.income),
+    "- Savings: saved " + peso(c.savedThisMonth) + " of a " + peso(c.savingsTarget) + " target (" + (S.savings.target != null ? "set by hand" : Math.round(SAVE_RATE*100) + "% of income received, capped at income − this month's bills") + "); still to put away " + peso(c.savingsLeft),
+    "- Credit cards owed (not in Total Balance): " + peso(c.cardsOwed), "");
+  L.push("## Accounts");
+  S.accounts.forEach(a => L.push("- " + a.name + ": " + peso(c.bal.acc[a.id]) + " · " +
+    (a.prot ? "protected" : "spendable") + (a.save ? " · counts as savings" : "")));
+  L.push("", "## Cards");
+  S.cards.forEach(k => L.push("- " + k.name + ": owes " + peso(c.bal.cards[k.id]) + " · due " + k.due + " · pay from " + acct(k.payFrom).name));
+  L.push("", "## Bills");
+  S.payables.slice().sort((a,b) => a.due < b.due ? -1 : 1).forEach(p => L.push("- " + p.name + ": " +
+    (p.amount == null ? "? (" + (p.reason || "amount unknown") + ")" : peso(p.amount)) + " · due " + p.due + " · " + (p.paid ? "paid" : "unpaid")));
+  if(withEntries === false) return L.join("\n");
+  L.push("", "## Entries in " + monthLabel(c.ym) + " (newest first)");
+  monthTxns(c.ym).slice().sort(sortTxn).forEach(t => {
+    const amt = t.kind === "checkpoint" ? signed(t.amount) : peso(t.amount);
+    L.push("- " + (t.date || "no day") + " · " + t.kind + " · " + amt + " · " + txnTitle(t) + " · " + txnSub(t) + (t.note ? " · note: " + t.note : ""));
+  });
+  return L.join("\n");
+}
+function aiSheet(){
+  const text = aiSnapshot();
+  openSheet({title:"Copy for ChatGPT / Claude", key:"ai", body:() => `
+    <p class="sm">Paste this into ChatGPT or Claude, then ask, e.g. <i>"Can I afford a ₱3,000
+      purchase this week?"</i> or <i>"Where did most of October go?"</i></p>
+    <button class="btn" data-act="aicopy">Copy snapshot</button>
+    <textarea class="inp num" id="aitext" readonly rows="12" style="font-family:var(--mono);font-size:12px">${esc(text)}</textarea>
+    <div class="note"><b>Private until you paste it</b>
+      <span>The app sends nothing. The snapshot is a copy of today's figures — paste a new one
+      after you log more, so the chat is not working from old numbers.</span></div>
+    <button class="btn alt" data-act="close">Close</button>`});
+}
+
+/* ---- start with your own money ------------------------------------------- */
+/* One sheet: accounts, cards, bills, a goal. Balances are what each account holds
+   right now, so the month starts from here — nothing earlier is invented. */
+let setup = null, eraseArmed = false;
+const KINDS = [["cash","Cash"],["bank","Bank"],["ewallet","E-wallet"],["savings","Savings"]];
+function startSetup(){
+  setup = {accounts:[{name:"Cash on Hand", kind:"cash", bal:"", prot:false, save:false}],
+    cards:[], bills:[], goal:{name:"", target:""}};
+  setupSheet();
+}
+function setupSheet(){
+  openSheet({title:"Start with my own money", key:"setup", body:() => {
+    const kindSel = (i, cur) => `<select class="inp" data-setup="acct.kind" data-i="${i}" aria-label="Kind">${KINDS.map(([v,l]) =>
+      `<option value="${v}" ${v === cur ? "selected" : ""}>${l}</option>`).join("")}</select>`;
+    const fromSel = (i, cur) => `<select class="inp" data-setup="card.payFrom" data-i="${i}">${setup.accounts.map((a,j) =>
+      `<option value="${j}" ${j === cur ? "selected" : ""}>${esc(a.name || "Account " + (j+1))}</option>`).join("")}</select>`;
+    const head = (label, list, i, removable) => `<div class="row"><span class="sm">${label} ${i+1}</span>
+      ${removable ? `<button class="link" data-act="setupdel" data-list="${list}" data-i="${i}">Remove</button>` : ""}</div>`;
+    return `
+    <p class="sm">Type what each account holds <b>right now</b>. The app starts from today, so only
+      log new money from here on — what already happened is inside these balances.</p>
+    <div class="k">Accounts</div>
+    ${setup.accounts.map((a,i) => `<div class="c tight stack8">
+      ${head("Account", "accounts", i, setup.accounts.length > 1)}
+      <input class="inp" placeholder="Name, e.g. Payroll account" value="${esc(a.name)}" data-setup="acct.name" data-i="${i}">
+      <div class="grid2">${kindSel(i, a.kind)}
+        <input class="inp num" inputmode="decimal" placeholder="₱ balance now" value="${esc(a.bal)}" data-setup="acct.bal" data-i="${i}"></div>
+      <button class="swrow" data-act="setuptog" data-key="prot" data-i="${i}" aria-checked="${a.prot}">
+        <span>Protected from spending<br><span class="sm">Kept out of Monthly Spendable</span></span><span class="knob"></span></button>
+      <button class="swrow" data-act="setuptog" data-key="save" data-i="${i}" aria-checked="${a.save}">
+        <span>Counts toward savings</span><span class="knob"></span></button>
+    </div>`).join("")}
+    <button class="btn alt sm" data-act="setupadd" data-list="accounts">+ Add an account</button>
+
+    <div class="k">Credit cards</div>
+    ${setup.cards.map((k,i) => `<div class="c tight stack8">
+      ${head("Card", "cards", i, true)}
+      <input class="inp" placeholder="Card name" value="${esc(k.name)}" data-setup="card.name" data-i="${i}">
+      <div class="grid2">
+        <input class="inp num" inputmode="decimal" placeholder="₱ owed now" value="${esc(k.owed)}" data-setup="card.owed" data-i="${i}">
+        <input class="inp num" type="date" value="${esc(k.due)}" data-setup="card.due" data-i="${i}" aria-label="Due date"></div>
+      <label class="f"><span class="flab">Pay from</span>${fromSel(i, k.payFrom)}</label>
+    </div>`).join("") || '<p class="sm">None yet.</p>'}
+    <button class="btn alt sm" data-act="setupadd" data-list="cards">+ Add a card</button>
+
+    <div class="k">Bills coming up</div>
+    ${setup.bills.map((b,i) => `<div class="c tight stack8">
+      ${head("Bill", "bills", i, true)}
+      <input class="inp" placeholder="Bill name, e.g. Internet" value="${esc(b.name)}" data-setup="bill.name" data-i="${i}">
+      <div class="grid2">
+        <input class="inp num" inputmode="decimal" placeholder="₱ — blank if unknown" value="${esc(b.amount)}" data-setup="bill.amount" data-i="${i}">
+        <input class="inp num" type="date" value="${esc(b.due)}" data-setup="bill.due" data-i="${i}" aria-label="Due date"></div>
+    </div>`).join("") || '<p class="sm">None yet. You can add bills later under More.</p>'}
+    <button class="btn alt sm" data-act="setupadd" data-list="bills">+ Add a bill</button>
+
+    <div class="k">A specific savings goal (optional)</div>
+    <div class="grid2">
+      <input class="inp" placeholder="Goal, e.g. Travel fund" value="${esc(setup.goal.name)}" data-setup="goal.name">
+      <input class="inp num" inputmode="decimal" placeholder="₱ target" value="${esc(setup.goal.target)}" data-setup="goal.target"></div>
+
+    <div class="note warn"><b>This replaces the sample data on this phone</b>
+      <span>The demo date goes away and the app follows your phone's calendar.</span></div>
+    <button class="btn" data-act="setupgo">Start using Money OS</button>
+    <button class="btn alt" data-act="close">Cancel</button>`;
+  }});
+}
+function finishSetup(){
+  const named = setup.accounts.map((a,i) => [a,i]).filter(([a]) => a.name.trim());
+  if(!named.length){ toast("Give at least one account a name."); return; }
+  let n = 1;
+  const idOf = {};
+  const accounts = named.map(([a,i], k) => { const id = "a" + (n++); idOf[i] = id;
+    return {id, name:a.name.trim(), kind:a.kind, slot:(k % 6) + 1, open:r2(+a.bal || 0), save:!!a.save, prot:!!a.prot}; });
+  const today = localToday();
+  const cards = setup.cards.filter(k => k.name.trim()).map(k => ({id:"c" + (n++), name:k.name.trim(),
+    open:r2(+k.owed || 0), payFrom:idOf[k.payFrom] || accounts[0].id, due:k.due || today}));
+  const payables = setup.bills.filter(b => b.name.trim()).map(b => {
+    const known = String(b.amount).trim() !== "";
+    const p = {id:"p" + (n++), name:b.name.trim(), amount:known ? r2(+b.amount) : null, due:b.due || today, paid:false};
+    if(!known) p.reason = "Amount not known yet";
+    return p; });
+  const g = setup.goal, target = r2(+g.target || 0);
+  S = {mode:"real", today, primary:S.primary || "total", theme:S.theme, sheet:S.sheet || null,
+    autoSync:S.autoSync !== false, accounts, cards, payables,
+    savings:{mode:"general", target:null, goal:{name:g.name.trim() || "Savings goal", target:target > 0 ? target : 10000}},
+    goalLog:[], merchants:{}, txns:[], nextId:n + 1};
+  setup = null; save(); screenName = "home"; closeSheet(stack.length); render(); window.scrollTo(0,0);
+  toast("You're live. Every figure now comes from your own accounts.");
+  scheduleSync();
+}
+/* ---- ChatGPT + Claude link: your own Google Sheet -------------------------- */
+/* The app writes the same figures to a Google Sheet Jordan owns, through his own
+   claude.ai connectors. ChatGPT reads it with its Google Drive connector, Claude with
+   Google Sheets — one source, both assistants. Writes happen only after he changes
+   something or taps Update now, never on load. */
+let syncMsg = {text:"", tone:""}, syncTimer = null;
+const sheetUrl = id => "https://docs.google.com/spreadsheets/d/" + id;
+function sheetIdFrom(text){
+  const t = String(text || "").trim(), m = t.match(/\/d\/([A-Za-z0-9_-]{20,})/);
+  return m ? m[1] : /^[A-Za-z0-9_-]{20,}$/.test(t) ? t : null;
+}
+async function mcpNS(){
+  try{ return window.claude && window.claude.use ? await window.claude.use("mcp") : null; }catch(e){ return null; }
+}
+function setSync(text, tone){
+  syncMsg = {text, tone:tone || ""};
+  const el = document.getElementById("syncmsg");
+  if(el){ el.textContent = text; el.className = "sm" + (tone ? " tone-" + tone : ""); }
+}
+function syncError(e, server){
+  const code = e && e.code;
+  if(code === "needs_reauth") return "! Reconnect " + server + " in claude.ai Settings → Connectors, then tap Update now.";
+  if(code === "server_not_connected" || code === "server_not_found") return "! Add the " + server + " connector in claude.ai Settings → Connectors.";
+  if(code === "selection_required") return "! Pick which " + server + " connector to use when Claude asks.";
+  if(code === "not_in_manifest" || code === "approval_required" || code === "consent_required" || code === "not_granted")
+    return "! " + server + " is not allowed for this app yet. Tap again and allow it when Claude asks.";
+  if(code === "blocked_by_policy") return "! " + server + " is blocked here.";
+  if(code === "server_unavailable" || code === "rate_limited" || code === "timeout") return "! " + server + " did not answer. Try again in a minute.";
+  if(code === "tool_error") return "! " + server + " refused. Check the sheet still exists and you can edit it.";
+  return "! Could not reach " + server + " (" + (code || "unknown") + "). Try again.";
+}
+/* Rows for the sheet: the snapshot text first (so either assistant reads the rules and
+   the month), then every entry as a table with plain numbers. */
+function sheetRows(){
+  const rows = aiSnapshot(false).split("\n").map(l => [l]);
+  rows.push([""], ["## All entries (newest first)"], ["Date", "Month", "Kind", "Amount", "Title", "Details", "Note"]);
+  const key = t => t.date || t.month + "-00";
+  S.txns.slice().sort((a,b) => key(a) < key(b) ? 1 : key(a) > key(b) ? -1 : 0).forEach(t =>
+    rows.push([t.date || "no day", t.month, t.kind, t.amount, txnTitle(t) || "", txnSub(t) || "", t.note || ""]));
+  return rows;
+}
+async function syncSheet(){
+  if(!S.sheet) return;
+  const mcp = await mcpNS();
+  if(!mcp){ setSync("Open the app inside Claude to update the sheet.", "warn"); return; }
+  setSync("Updating your sheet…");
+  try{
+    await mcp.callTool("Google Sheets", "batch_clear_values", {spreadsheetId:S.sheet.id, ranges:["A1:H5000"]});
+    await mcp.callTool("Google Sheets", "update_values", {spreadsheetId:S.sheet.id, range:"A1", values:sheetRows()});
+    S.sheet.last = new Date().toISOString(); save();
+    setSync("✓ Sheet updated " + new Date(S.sheet.last).toLocaleTimeString([], {hour:"numeric", minute:"2-digit"}) + ".", "good");
+  }catch(e){ setSync(syncError(e, "Google Sheets"), "bad"); }
+}
+function scheduleSync(){
+  if(!S.sheet || S.autoSync === false) return;
+  clearTimeout(syncTimer); syncTimer = setTimeout(syncSheet, 2000);
+}
+async function createSheet(){
+  const mcp = await mcpNS();
+  if(!mcp){ setSync("Open the app inside Claude to create the sheet.", "warn"); return; }
+  setSync("Creating your sheet in Google Drive…");
+  try{
+    const r = await mcp.callTool("Google Drive", "create_file",
+      {title:"Money OS — live data", contentMimeType:"application/vnd.google-apps.spreadsheet"});
+    const p = (r && r.payload) || {}, f = p.file || p;
+    const id = f.id || f.fileId || sheetIdFrom(f.webViewLink || f.alternateLink || "");
+    if(!id){ setSync("! Drive did not say where the sheet is. Find “Money OS — live data” in Drive and paste its link below.", "bad"); return; }
+    S.sheet = {id, url:f.webViewLink || f.alternateLink || sheetUrl(id)}; S.autoSync = true; save(); render();
+    await syncSheet();
+  }catch(e){ setSync(syncError(e, "Google Drive"), "bad"); }
+}
+function linkSection(){
+  const last = S.sheet && S.sheet.last ? "Last updated " + new Date(S.sheet.last).toLocaleString([],
+    {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"}) + "." : "Not updated yet.";
+  const msg = syncMsg.text || (S.sheet ? last : "");
+  return `<section class="c stack8">
+    <div class="k">ChatGPT + Claude link</div>
+    ${S.sheet ? `
+    <p class="sm">Your figures go to <a class="link" href="${esc(S.sheet.url)}" target="_blank" rel="noopener">your Money OS sheet</a>.
+      Both assistants read the same sheet:</p>
+    <div class="ledger">
+      <div class="lg"><span>ChatGPT</span><b>Google Drive connector</b></div>
+      <div class="lg"><span>Claude</span><b>Google Sheets connector</b></div>
+    </div>
+    <p class="sm">Then ask either one, e.g. <i>"Read my Money OS — live data sheet. Can I afford ₱3,000 this week?"</i></p>
+    <button class="swrow" data-act="autosync" aria-checked="${S.autoSync !== false}">
+      <span>Update the sheet after every change<br><span class="sm">Otherwise only when you tap Update now</span></span>
+      <span class="knob"></span></button>
+    <button class="btn alt" data-act="syncnow">Update now</button>
+    <button class="link" data-act="unlink">Stop updating this sheet</button>` : `
+    <p class="sm">Keep a copy of your figures in a Google Sheet you own. ChatGPT reads it with its
+      Google Drive connector and Claude with Google Sheets, so both work from the same numbers.
+      Nothing is sent until you tap.</p>
+    <button class="btn" data-act="mksheet">Create my Money OS sheet</button>
+    <label class="f"><span class="flab">Or use a sheet you already made</span>
+      <input class="inp" id="sheetlink" placeholder="Paste the Google Sheet link" autocomplete="off"></label>
+    <button class="btn alt sm" data-act="usesheet">Use this sheet</button>`}
+    <p id="syncmsg" class="sm${syncMsg.tone ? " tone-" + syncMsg.tone : ""}" aria-live="polite">${esc(msg)}</p>
+  </section>`;
+}
+
+/* Setup fields write straight into the setup draft; a few changes repaint. */
+function setupInput(e){
+  const f = e.target.dataset && e.target.dataset.setup;
+  if(!f || !setup) return;
+  const i = +e.target.dataset.i, v = e.target.value, [grp, key] = f.split(".");
+  if(grp === "acct"){
+    const a = setup.accounts[i]; a[key] = v;
+    if(e.type === "change" && key === "kind"){ a.prot = a.save = v === "savings"; refresh(); }
+    else if(e.type === "change" && key === "name" && setup.cards.length && !pressing) refresh();   // Pay from lists follow names
+  }
+  else if(grp === "card") setup.cards[i][key] = key === "payFrom" ? +v : v;
+  else if(grp === "bill") setup.bills[i][key] = v;
+  else if(grp === "goal") setup.goal[key] = v;
 }
 
 /* ===========================================================================
@@ -1693,8 +1996,9 @@ const SCENARIOS = [
     S.primary = was === "total" ? "spendable" : "total";
     save();
     let stored = "(storage unavailable)";
-    try{ const v = JSON.parse(localStorage.getItem(KEY)); if(v) stored = v.primary; }catch(e){}
-    return {pass: S.primary !== was && (stored === S.primary || stored === "(storage unavailable)"),
+    if(noSave) stored = "(not stored — your own data is kept)";
+    else try{ const v = JSON.parse(localStorage.getItem(KEY)); if(v) stored = v.primary; }catch(e){}
+    return {pass: S.primary !== was && (stored === S.primary || stored.startsWith("(")),
       lines:[["was leading", was === "total" ? "Total Balance" : "Monthly Spendable"],
         ["now leading", S.primary === "total" ? "Total Balance" : "Monthly Spendable"],
         ["saved on this device as", String(stored)],
@@ -1840,15 +2144,25 @@ function scenarioSheet(){
     <button class="btn alt" data-act="close">Close</button>`;
   }});
 }
+/* With your own data loaded, scenarios run on a throwaway sample copy and your
+   data is put back untouched afterwards. */
+function onSample(fn){
+  if(!isReal()) return fn();
+  const mine = S; noSave = true;
+  try{ S = seed(); return fn(); } finally { S = mine; noSave = false; }
+}
 function runScenario(n){
   const s = SCENARIOS.find(x => x.n === n);
-  try{ scRes[n] = s.run(); }catch(e){ scRes[n] = {pass:false, lines:[["error", String(e.message||e)]]}; }
+  onSample(() => { try{ scRes[n] = s.run(); }catch(e){ scRes[n] = {pass:false, lines:[["error", String(e.message||e)]]}; } });
   save(); render(); refresh();
   toast("Scenario " + n + ": " + (scRes[n].pass ? "passed" : "failed"));
 }
 function runAll(){
-  resetDemo(); scRes = {};
-  SCENARIOS.forEach(s => { try{ scRes[s.n] = s.run(); }catch(e){ scRes[s.n] = {pass:false, lines:[["error", String(e.message||e)]]}; } });
+  scRes = {};
+  onSample(() => {
+    if(!isReal()) resetDemo(); else S = seed();
+    SCENARIOS.forEach(s => { try{ scRes[s.n] = s.run(); }catch(e){ scRes[s.n] = {pass:false, lines:[["error", String(e.message||e)]]}; } });
+  });
   save(); render(); refresh();
   const p = Object.values(scRes).filter(r => r.pass).length;
   toast(p + " of " + SCENARIOS.length + " scenarios passed.");
@@ -1859,10 +2173,14 @@ function runAll(){
    =========================================================================== */
 const fx = () => `<div id="fx">${effectStrip() || '<p class="sm">Enter an amount to see the effect.</p>'}</div>`;
 
+/* Actions that change the figures; a linked sheet catches up shortly after. */
+const CHANGES = new Set(["saveexp","saveinc","savemove","savepay","saveedit","deltxn","savebill","savenewbill",
+  "savechk","togprot","togsave","savetgt","cleartgt","savegoal"]);
 document.addEventListener("click", e => {
   const el = e.target.closest("[data-act]");
   if(!el) return;
   const a = el.dataset.act, id = el.dataset.id, v = el.dataset.v;
+  if(CHANGES.has(a) && isReal()) setTimeout(scheduleSync, 0);
   const top = stack[stack.length-1];
   switch(a){
     case "close": closeSheet(); break;
@@ -1878,6 +2196,36 @@ document.addEventListener("click", e => {
     case "day": S.today = addDays(S.today, +el.dataset.d); save(); render(); refresh(); break;
     case "jump": S.today = v; save(); render(); refresh(); break;
     case "guide": guideSheet(); break;
+    case "aisnap": aiSheet(); break;
+    case "setup": startSetup(); break;
+    case "setupadd":
+      if(el.dataset.list === "accounts") setup.accounts.push({name:"", kind:"bank", bal:"", prot:false, save:false});
+      else if(el.dataset.list === "cards") setup.cards.push({name:"", owed:"", due:"", payFrom:0});
+      else setup.bills.push({name:"", amount:"", due:""});
+      refresh(); break;
+    case "setupdel": setup[el.dataset.list].splice(+el.dataset.i, 1); refresh(); break;
+    case "setuptog": { const x = setup.accounts[+el.dataset.i]; x[el.dataset.key] = !x[el.dataset.key]; refresh(); break; }
+    case "setupgo": finishSetup(); break;
+    case "erase":
+      if(!eraseArmed){ eraseArmed = true; render();
+        setTimeout(() => { if(eraseArmed){ eraseArmed = false; render(); } }, 5000); break; }
+      eraseArmed = false; S = Object.assign(seed(), {theme:S.theme}); save(); scRes = {}; screenName = "home"; render();
+      toast("Your data is erased from this phone and the sample is back. Your Google Sheet is untouched."); break;
+    case "mksheet": createSheet(); break;
+    case "usesheet": {
+      const sid = sheetIdFrom(document.getElementById("sheetlink").value);
+      if(!sid){ toast("That does not look like a Google Sheet link."); break; }
+      S.sheet = {id:sid, url:sheetUrl(sid)}; S.autoSync = true; save(); render(); syncSheet(); break; }
+    case "syncnow": syncSheet(); break;
+    case "autosync": S.autoSync = S.autoSync === false; save(); render(); break;
+    case "unlink": S.sheet = null; syncMsg = {text:"", tone:""}; save(); render();
+      toast("Unlinked. The sheet stays in your Drive with the last figures."); break;
+    case "aicopy": {
+      const ta = document.getElementById("aitext");
+      const done = () => toast("Snapshot copied. Paste it into ChatGPT or Claude.");
+      const manual = () => { ta.focus(); ta.select(); toast("Selected — tap Copy to copy it."); };
+      try{ navigator.clipboard.writeText(ta.value).then(done, manual); }catch(e){ manual(); }
+      break; }
     case "scenarios": scenarioSheet(); break;
     case "runsc": runScenario(+el.dataset.n); break;
     case "runall": runAll(); break;
@@ -1897,8 +2245,8 @@ document.addEventListener("click", e => {
     case "manual": closeSheet(); expenseForm(); break;
     case "confirmscan": draft.confirmed = !draft.confirmed; refresh(); break;
     case "preset":
-      if(v === "withdraw") Object.assign(draft, {from:"bpi", to:"cash", note:"ATM withdrawal"});
-      else Object.assign(draft, {from:"bpi", to:"bdos", note:"Monthly savings"});
+      if(v === "withdraw") Object.assign(draft, {from:defMain(), to:defCash(), note:"ATM withdrawal"});
+      else Object.assign(draft, {from:defMain(), to:defSave(), note:"Monthly savings"});
       refresh(); break;
     /* pickers */
     case "pick": if(top && top.onPick) top.onPick(v); break;
@@ -2004,13 +2352,13 @@ document.addEventListener("click", e => {
       toast("Savings recommendation set to " + peso(calc().savingsTarget) + "."); break; }
     case "cleartgt": S.savings.target = null; save(); closeSheet(stack.length); render();
       toast("Back to " + Math.round(SAVE_RATE*100) + "% of income received."); break;
-    case "addgoal": draft = {gacct:"bdos"}; addGoalSheet(); break;
+    case "addgoal": draft = {gacct:defSave()}; addGoalSheet(); break;
     case "savegoal": {
       const amt = r2(+(document.getElementById("ga").value || 0));
       if(!(amt > 0)){ toast("Enter an amount."); break; }
-      const to = draft.gacct || "bdos";
+      const to = draft.gacct || defSave();
       S.goalLog.push({id:"g" + (S.nextId++), date:S.today, amount:amt, acct:to});
-      commit({kind:"transfer", amount:amt, date:S.today, month:S.today.slice(0,7), from:"bpi", to,
+      commit({kind:"transfer", amount:amt, date:S.today, month:S.today.slice(0,7), from:defMain(), to,
         note:S.savings.goal.name});
       closeSheet(stack.length); render();
       toast(peso(amt) + " added to " + S.savings.goal.name + ". Recorded as a transfer, not income.");
@@ -2029,6 +2377,8 @@ document.addEventListener("input", e => {
   const none = document.getElementById("nomerch");
   if(none) none.hidden = !(q && shown === 0);
 });
+document.addEventListener("input", setupInput);
+document.addEventListener("change", setupInput);
 /* Keep the draft in step without re-rendering the field being typed in. */
 document.addEventListener("input", e => {
   const f = e.target.dataset.f;
