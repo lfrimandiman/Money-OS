@@ -2,6 +2,14 @@
 
 One entry per version, newest first.
 
+## v6 — 2026-10-25 (first full-use version)
+- **Backup and restore through the sheet.** Every sheet update also writes the whole app state
+  to column J. On a new phone, browser or home-screen icon, More → paste the sheet link →
+  *Restore from it* brings everything back. In real mode restoring asks for a second tap.
+- Sample data can no longer reach the sheet: creating or sending to a sheet needs real mode,
+  and updates are skipped in sample mode.
+- All nine acceptance scenarios pass.
+
 ## v5 — 2026-10-25
 - **Start with my own money** (More, in sample mode): one setup sheet for accounts (name, kind,
   balance right now, protected / counts as savings), credit cards (owed now, due, pay from),
