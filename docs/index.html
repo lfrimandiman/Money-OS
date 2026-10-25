@@ -236,6 +236,13 @@ textarea.inp{min-height:76px;padding:12px 14px;resize:vertical;line-height:1.4}
 .note.bad{background:var(--badBg);color:var(--bad)}
 .note.good{background:var(--goodBg);color:var(--good)}
 .tone-good{color:var(--good)}
+.obwelcome{display:grid;gap:14px;justify-items:start;padding:36px 4px 22px}
+.obwelcome h1{font-size:30px}
+.obmark{width:76px;height:76px;border-radius:20px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;position:relative;font-size:40px;font-weight:800;color:var(--ink);letter-spacing:-2px;padding-bottom:14px;box-sizing:border-box}
+.obmark i{position:absolute;left:19px;right:19px;bottom:15px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--accent) 62%,var(--line) 62%)}
+.obtop{margin-top:14px}
+.obskip{justify-self:center;margin-top:6px}
+.obnav{margin:14px 0 40px}
 .steps{margin:0;padding-left:20px;display:grid;gap:6px}
 .tone-warn{color:var(--warn)}
 .tone-bad{color:var(--bad)}
@@ -406,7 +413,7 @@ function load(){
     const raw = localStorage.getItem(KEY);
     if(raw){ const v = JSON.parse(raw); if(v && v.accounts) return v; }
   }catch(e){}
-  return seed();
+  return Object.assign(seed(), {mode:"new"});   // first open: the welcome, not sample figures
 }
 let noSave = false;                    // set while scenarios run on a sample copy
 function save(){ if(noSave) return; try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
@@ -658,9 +665,12 @@ function render(){
   if(isReal()) S.today = localToday();
   document.getElementById("clocklbl").textContent = dateLabel(S.today);
   document.getElementById("todaylbl").textContent = dateLabel(S.today);
-  document.getElementById("samplepill").hidden = isReal();
-  document.getElementById("todaylbl").hidden = !isReal();
-  document.getElementById("clockbtn").hidden = isReal();
+  const onb = onboarding();
+  document.getElementById("samplepill").hidden = isReal() || onb;
+  document.getElementById("todaylbl").hidden = !isReal() || onb;
+  document.getElementById("clockbtn").hidden = isReal() || onb;
+  document.querySelector(".tabbar").hidden = onb;
+  if(onb){ document.getElementById("screen").innerHTML = onboardScreen(); save(); return; }
   document.querySelectorAll(".tab").forEach(b =>
     b.setAttribute("aria-current", b.dataset.screen === screenName ? "page" : "false"));
   const el = document.getElementById("screen");
@@ -1750,22 +1760,26 @@ function aiSheet(){
 let setup = null, eraseArmed = false;
 const KINDS = [["cash","Cash"],["bank","Bank"],["ewallet","E-wallet"],["savings","Savings"]];
 function startSetup(){
-  setup = {accounts:[{name:"Cash on Hand", kind:"cash", bal:"", prot:false, save:false}],
+  setup = setup || {accounts:[{name:"Cash on Hand", kind:"cash", bal:"", prot:false, save:false}],
     cards:[], bills:[], goal:{name:"", target:""}};
-  setupSheet();
+  ob = 1; closeSheet(stack.length); render(); window.scrollTo(0,0);
 }
-function setupSheet(){
-  openSheet({title:"Start with my own money", key:"setup", body:() => {
-    const kindSel = (i, cur) => `<select class="inp" data-setup="acct.kind" data-i="${i}" aria-label="Kind">${KINDS.map(([v,l]) =>
-      `<option value="${v}" ${v === cur ? "selected" : ""}>${l}</option>`).join("")}</select>`;
-    const fromSel = (i, cur) => `<select class="inp" data-setup="card.payFrom" data-i="${i}">${setup.accounts.map((a,j) =>
-      `<option value="${j}" ${j === cur ? "selected" : ""}>${esc(a.name || "Account " + (j+1))}</option>`).join("")}</select>`;
-    const head = (label, list, i, removable) => `<div class="row"><span class="sm">${label} ${i+1}</span>
-      ${removable ? `<button class="link" data-act="setupdel" data-list="${list}" data-i="${i}">Remove</button>` : ""}</div>`;
-    return `
-    <p class="sm">Type what each account holds <b>right now</b>. The app starts from today, so only
-      log new money from here on — what already happened is inside these balances.</p>
-    <div class="k">Accounts</div>
+/* Onboarding takes the whole screen: a welcome, four short steps, then a review. A
+   preview under each step shows the app being built from what has been typed so far,
+   using the same calc() as everything else. */
+let ob = 0;   // 0 = not onboarding (or the welcome, when S.mode is "new"), 1–4 steps, 5 review, "restore"
+const OB_STEPS = ["Your accounts", "Credit cards", "Bills coming up", "A savings goal"];
+const onboarding = () => !!ob || S.mode === "new";
+function setupRows(step){
+  const kindSel = (i, cur) => `<select class="inp" data-setup="acct.kind" data-i="${i}" aria-label="Kind">${KINDS.map(([v,l]) =>
+    `<option value="${v}" ${v === cur ? "selected" : ""}>${l}</option>`).join("")}</select>`;
+  const fromSel = (i, cur) => `<select class="inp" data-setup="card.payFrom" data-i="${i}">${setup.accounts.map((a,j) =>
+    `<option value="${j}" ${j === cur ? "selected" : ""}>${esc(a.name || "Account " + (j+1))}</option>`).join("")}</select>`;
+  const head = (label, list, i, removable) => `<div class="row"><span class="sm">${label} ${i+1}</span>
+    ${removable ? `<button class="link" data-act="setupdel" data-list="${list}" data-i="${i}">Remove</button>` : ""}</div>`;
+  if(step === 1) return `
+    <p class="sm">Cash, bank, e-wallet and savings. Type what each one holds <b>right now</b> — the app
+      starts from today, so what already happened is inside these balances.</p>
     ${setup.accounts.map((a,i) => `<div class="c tight stack8">
       ${head("Account", "accounts", i, setup.accounts.length > 1)}
       <input class="inp" placeholder="Name, e.g. Payroll account" value="${esc(a.name)}" data-setup="acct.name" data-i="${i}">
@@ -1776,9 +1790,9 @@ function setupSheet(){
       <button class="swrow" data-act="setuptog" data-key="save" data-i="${i}" aria-checked="${a.save}">
         <span>Counts toward savings</span><span class="knob"></span></button>
     </div>`).join("")}
-    <button class="btn alt sm" data-act="setupadd" data-list="accounts">+ Add an account</button>
-
-    <div class="k">Credit cards</div>
+    <button class="btn alt sm" data-act="setupadd" data-list="accounts">+ Add an account</button>`;
+  if(step === 2) return `
+    <p class="sm">What each card owes right now. It is set aside from what you can spend. No cards? Skip this.</p>
     ${setup.cards.map((k,i) => `<div class="c tight stack8">
       ${head("Card", "cards", i, true)}
       <input class="inp" placeholder="Card name" value="${esc(k.name)}" data-setup="card.name" data-i="${i}">
@@ -1786,33 +1800,30 @@ function setupSheet(){
         <input class="inp num" inputmode="decimal" placeholder="₱ owed now" value="${esc(k.owed)}" data-setup="card.owed" data-i="${i}">
         <input class="inp num" type="date" value="${esc(k.due)}" data-setup="card.due" data-i="${i}" aria-label="Due date"></div>
       <label class="f"><span class="flab">Pay from</span>${fromSel(i, k.payFrom)}</label>
-    </div>`).join("") || '<p class="sm">None yet.</p>'}
-    <button class="btn alt sm" data-act="setupadd" data-list="cards">+ Add a card</button>
-
-    <div class="k">Bills coming up</div>
+    </div>`).join("")}
+    <button class="btn alt sm" data-act="setupadd" data-list="cards">+ Add a card</button>`;
+  if(step === 3) return `
+    <p class="sm">Bills still to pay. Leave the amount blank if you don't know it yet — it stays marked
+      <b>?</b> and is never guessed. You can add more later under More.</p>
     ${setup.bills.map((b,i) => `<div class="c tight stack8">
       ${head("Bill", "bills", i, true)}
       <input class="inp" placeholder="Bill name, e.g. Internet" value="${esc(b.name)}" data-setup="bill.name" data-i="${i}">
       <div class="grid2">
         <input class="inp num" inputmode="decimal" placeholder="₱ — blank if unknown" value="${esc(b.amount)}" data-setup="bill.amount" data-i="${i}">
         <input class="inp num" type="date" value="${esc(b.due)}" data-setup="bill.due" data-i="${i}" aria-label="Due date"></div>
-    </div>`).join("") || '<p class="sm">None yet. You can add bills later under More.</p>'}
-    <button class="btn alt sm" data-act="setupadd" data-list="bills">+ Add a bill</button>
-
-    <div class="k">A specific savings goal (optional)</div>
+    </div>`).join("")}
+    <button class="btn alt sm" data-act="setupadd" data-list="bills">+ Add a bill</button>`;
+  return `
+    <p class="sm">Optional. Saving toward something specific? The monthly savings target is worked out
+      for you either way (25% of income received).</p>
     <div class="grid2">
       <input class="inp" placeholder="Goal, e.g. Travel fund" value="${esc(setup.goal.name)}" data-setup="goal.name">
-      <input class="inp num" inputmode="decimal" placeholder="₱ target" value="${esc(setup.goal.target)}" data-setup="goal.target"></div>
-
-    <div class="note warn"><b>This replaces the sample data on this phone</b>
-      <span>The demo date goes away and the app follows your phone's calendar.</span></div>
-    <button class="btn" data-act="setupgo">Start using Money OS</button>
-    <button class="btn alt" data-act="close">Cancel</button>`;
-  }});
+      <input class="inp num" inputmode="decimal" placeholder="₱ target" value="${esc(setup.goal.target)}" data-setup="goal.target"></div>`;
 }
-function finishSetup(){
+/* The state the setup would start, or null while no account has a name. */
+function buildReal(){
   const named = setup.accounts.map((a,i) => [a,i]).filter(([a]) => a.name.trim());
-  if(!named.length){ toast("Give at least one account a name."); return; }
+  if(!named.length) return null;
   let n = 1;
   const idOf = {};
   const accounts = named.map(([a,i], k) => { const id = "a" + (n++); idOf[i] = id;
@@ -1826,11 +1837,82 @@ function finishSetup(){
     if(!known) p.reason = "Amount not known yet";
     return p; });
   const g = setup.goal, target = r2(+g.target || 0);
-  S = {mode:"real", today, primary:S.primary || "total", theme:S.theme, sheet:S.sheet || null,
+  return {mode:"real", today, primary:S.primary || "total", theme:S.theme, sheet:S.sheet || null,
     autoSync:S.autoSync !== false, accounts, cards, payables,
     savings:{mode:"general", target:null, goal:{name:g.name.trim() || "Savings goal", target:target > 0 ? target : 10000}},
     goalLog:[], merchants:{}, txns:[], nextId:n + 1};
-  setup = null; save(); screenName = "home"; closeSheet(stack.length); render(); window.scrollTo(0,0);
+}
+function obPreview(){
+  const st = buildReal();
+  if(!st) return '<p class="sm">Name an account and your Money OS starts appearing here.</p>';
+  const keep = S; let c;
+  S = st; try{ c = calc(); }finally{ S = keep; }
+  return `<div class="ledger">
+      <div class="lg"><span>Total Balance</span><b>${pesoR(c.total)}</b></div>
+      ${st.cards.length ? `<div class="lg"><span class="op">Cards owed</span><b>${pesoR(c.cardsOwed)}</b></div>` : ""}
+      ${st.payables.length ? `<div class="lg"><span class="op">Bills due this month</span><b>${pesoR(c.billsDueMonth)}${c.billsUnknown.length ? " + ?" : ""}</b></div>` : ""}
+      <div class="lg tot${c.remaining < 0 ? " neg" : ""}"><span>Spendable, rest of ${MONTHS[+c.ym.slice(5,7)-1]}</span><b>${pesoR(c.remaining)}</b></div>
+    </div>
+    <p class="sm">${st.accounts.length} account${st.accounts.length > 1 ? "s" : ""}${st.cards.length ? " · " + st.cards.length + " card" + (st.cards.length > 1 ? "s" : "") : ""}${st.payables.length ? " · " + st.payables.length + " bill" + (st.payables.length > 1 ? "s" : "") : ""}</p>`;
+}
+function onboardScreen(){
+  if(ob === "restore") return `
+  <section class="c stack8 obtop">
+    <h1>Bring your data here</h1>
+    <p class="sm">On the phone that has your data: More → ${HOSTED ? "<b>Copy restore code</b>" : "copy your Money OS sheet link"}.
+      Paste it here.</p>
+    <input class="inp" id="sheetlink" placeholder="${HOSTED ? "Paste the restore code" : "Paste the Google Sheet link"}" autocomplete="off">
+    <button class="btn" data-act="restore">Restore my data</button>
+    <p id="syncmsg" class="sm${syncMsg.tone ? " tone-" + syncMsg.tone : ""}" aria-live="polite">${esc(syncMsg.text)}</p>
+    <button class="btn alt" data-act="obback">Back</button>
+  </section>`;
+  if(!ob) return `
+  <section class="obwelcome">
+    <div class="obmark" aria-hidden="true">M<i></i></div>
+    <h1>Let's build your Money OS</h1>
+    <p class="sm">Four short steps: your accounts, cards, bills and a goal. You'll see the app take
+      shape as you type. Everything stays on this phone.</p>
+  </section>
+  <div class="stack8">
+    <button class="btn" data-act="setup">Set up my money</button>
+    <button class="btn alt" data-act="obrestore">I already use it on another phone</button>
+    <button class="link obskip" data-act="obsample">Look around with sample data first</button>
+  </div>`;
+  if(ob === 5){
+    const st = buildReal();
+    return `
+  <section class="c stack8 obtop">
+    <span class="k">Ready</span>
+    <h1>Here's your starting point</h1>
+    <div id="obprev" class="stack8">${obPreview()}</div>
+    <p class="sm">From here on, log only new money. Every figure is worked out again each time.</p>
+  </section>
+  <div class="stack8">
+    <button class="btn" data-act="setupgo" ${st ? "" : "disabled"}>Start using Money OS</button>
+    <button class="btn alt" data-act="obprev">Back</button>
+  </div>`;
+  }
+  return `
+  <section class="c stack8 obtop">
+    <div class="row"><span class="k">Step ${ob} of 4</span>
+      ${ob > 1 ? `<button class="link" data-act="obnext">Skip</button>` : ""}</div>
+    ${meter(ob / 4)}
+    <h1>${OB_STEPS[ob-1]}</h1>
+    ${setupRows(ob)}
+  </section>
+  <section class="c stack8">
+    <span class="k">Your Money OS so far</span>
+    <div id="obprev" class="stack8">${obPreview()}</div>
+  </section>
+  <div class="grid2 obnav">
+    <button class="btn alt" style="width:100%" data-act="obprev">Back</button>
+    <button class="btn" style="width:100%" data-act="obnext">${ob === 4 ? "Review" : "Next"}</button>
+  </div>`;
+}
+function finishSetup(){
+  const st = buildReal();
+  if(!st){ toast("Give at least one account a name."); return; }
+  S = st; setup = null; ob = 0; save(); screenName = "home"; closeSheet(stack.length); render(); window.scrollTo(0,0);
   toast("You're live. Every figure now comes from your own accounts.");
   scheduleSync();
 }
@@ -1996,7 +2078,7 @@ function backupRows(){
 function applyBackup(json, sheet){
   const data = JSON.parse(json);
   if(!Array.isArray(data.accounts) || !Array.isArray(data.txns) || !data.accounts.length) throw {code:"bad_backup"};
-  S = Object.assign(data, {mode:"real", theme:S.theme || data.theme, sheet});
+  S = Object.assign(data, {mode:"real", theme:S.theme || data.theme, sheet}); ob = 0; setup = null;
   if(S.autoSync == null) S.autoSync = true;
   restoreArmed = false; save(); screenName = "home"; closeSheet(stack.length); render(); window.scrollTo(0,0);
   toast("Restored " + S.accounts.length + " accounts and " + S.txns.length + " entries from your sheet.");
@@ -2090,12 +2172,13 @@ function setupInput(e){
   const i = +e.target.dataset.i, v = e.target.value, [grp, key] = f.split(".");
   if(grp === "acct"){
     const a = setup.accounts[i]; a[key] = v;
-    if(e.type === "change" && key === "kind"){ a.prot = a.save = v === "savings"; refresh(); }
-    else if(e.type === "change" && key === "name" && setup.cards.length && !pressing) refresh();   // Pay from lists follow names
+    if(e.type === "change" && key === "kind"){ a.prot = a.save = v === "savings"; render(); return; }
   }
   else if(grp === "card") setup.cards[i][key] = key === "payFrom" ? +v : v;
   else if(grp === "bill") setup.bills[i][key] = v;
   else if(grp === "goal") setup.goal[key] = v;
+  const pv = document.getElementById("obprev");       // the preview builds as you type
+  if(pv) pv.innerHTML = obPreview();
 }
 
 /* ===========================================================================
@@ -2365,15 +2448,26 @@ document.addEventListener("click", e => {
       if(el.dataset.list === "accounts") setup.accounts.push({name:"", kind:"bank", bal:"", prot:false, save:false});
       else if(el.dataset.list === "cards") setup.cards.push({name:"", owed:"", due:"", payFrom:0});
       else setup.bills.push({name:"", amount:"", due:""});
-      refresh(); break;
-    case "setupdel": setup[el.dataset.list].splice(+el.dataset.i, 1); refresh(); break;
-    case "setuptog": { const x = setup.accounts[+el.dataset.i]; x[el.dataset.key] = !x[el.dataset.key]; refresh(); break; }
+      render(); break;
+    case "setupdel": setup[el.dataset.list].splice(+el.dataset.i, 1); render(); break;
+    case "setuptog": { const x = setup.accounts[+el.dataset.i]; x[el.dataset.key] = !x[el.dataset.key]; render(); break; }
     case "setupgo": finishSetup(); break;
+    case "obnext":
+      if(ob === 1 && !buildReal()){ toast("Give at least one account a name."); break; }
+      ob = Math.min(5, ob + 1); render(); window.scrollTo(0,0); break;
+    case "obprev":
+      ob = ob - 1;
+      if(ob === 0 && S.mode !== "new"){ setup = null; screenName = "more"; }
+      render(); window.scrollTo(0,0); break;
+    case "obrestore": ob = "restore"; syncMsg = {text:"", tone:""}; render(); break;
+    case "obback": ob = 0; render(); break;
+    case "obsample": S = seed(); ob = 0; setup = null; save(); screenName = "home"; render();
+      toast("Sample data — made up, to look around. More → Start with my own money when ready."); break;
     case "erase":
       if(!eraseArmed){ eraseArmed = true; render();
         setTimeout(() => { if(eraseArmed){ eraseArmed = false; render(); } }, 5000); break; }
-      eraseArmed = false; S = Object.assign(seed(), {theme:S.theme}); save(); scRes = {}; screenName = "home"; render();
-      toast("Your data is erased from this phone and the sample is back. Your Google Sheet is untouched."); break;
+      eraseArmed = false; S = Object.assign(seed(), {theme:S.theme, mode:"new"}); save(); scRes = {}; screenName = "home"; render();
+      toast("Your data is erased from this phone. Your Google Sheet is untouched."); break;
     case "mksheet": createSheet(); break;
     case "usesheet": {
       const sid = sheetIdFrom(document.getElementById("sheetlink").value);
